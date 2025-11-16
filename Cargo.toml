@@ -1,0 +1,15 @@
+[package]
+name = "gloton"
+version = "0.1.0"
+authors = ["Alex Torres <me@alextorresruiz.xyz>"]
+edition = "2021"
+rust-version = "1.91"
+description = "A simple CLI tool built with Rust"
+license = "MIT"
+repository = "https://github.com/alextorresruiz/gloton"
+keywords = ["cli", "tool"]
+categories = ["command-line-utilities"]
+resolver = "2"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }

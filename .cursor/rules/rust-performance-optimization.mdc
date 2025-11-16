@@ -1,0 +1,39 @@
+---
+description: "⚠️ DEPRECATED - Split into specialized rules for profiling, optimization techniques, benchmarking, and memory optimization"
+globs: ["**/*.rs"]
+alwaysApply: false
+---
+
+# Rust Performance Optimization (DEPRECATED)
+
+## Description
+
+**⚠️ DEPRECATION NOTICE - This rule has been deprecated as of 2025-01-30.**
+
+**Reason:** This rule has been split into 4 specialized, cohesive rules for better organization and maintainability:
+
+1. **rust-profiling-analysis.mdc** - Profiling tools, bottleneck identification, performance analysis
+2. **rust-optimization-techniques.mdc** - Compiler optimizations, inlining, SIMD, const evaluation
+3. **rust-benchmarking.mdc** - Criterion benchmarks, statistical analysis, regression detection
+4. **rust-memory-optimization.mdc** - Allocation patterns, memory layout, cache efficiency
+
+**Migration:** Use the specialized rules above for specific optimization concerns.
+
+## Rule
+
+This rule is deprecated. Refer to the specialized replacement rules listed above.
+
+## Implementation
+
+No longer enforced. Use the replacement rules for specific performance optimization concerns.
+
+## Benefits
+
+The deprecated rule has been split into cohesive, focused rules that provide:
+- Better organization by separating profiling, optimization, benchmarking, and memory concerns
+- More maintainable and targeted guidance
+- Clearer separation of analysis (profiling) from action (optimization)
+
+## Examples
+
+See the replacement rules for current examples of performance optimization best practices.

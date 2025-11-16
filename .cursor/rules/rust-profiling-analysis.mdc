@@ -1,0 +1,144 @@
+---
+description: "Enforce systematic profiling practices using cargo flamegraph, perf, and profiling tools to identify performance bottlenecks and hot paths"
+globs: ["**/*.rs", "**/Cargo.toml"]
+alwaysApply: true
+---
+
+# Rust Profiling and Performance Analysis
+
+## Description
+
+Enforce systematic profiling as the foundation of performance optimization. Use appropriate profiling tools (cargo flamegraph, perf, valgrind), structured bottleneck identification, and rigorous analysis to pinpoint performance-critical code paths before optimization. Profiling transforms speculation into evidence-based optimization decisions.
+
+## Rule
+
+1. **Always profile before optimizing** - Never optimize based on intuition, measure with profiling tools first.
+
+2. **Identify hot paths with statistical significance** - Focus optimization on code paths consuming >5% of total execution time.
+
+3. **Use perf for hardware-level analysis** - Analyze cache misses, branch predictions, and IPC when CPU bottlenecks are identified.
+
+4. **Analyze call graphs** for unexpected overhead like allocation functions, dynamic dispatch, or deep recursion in hot paths.
+
+5. **Profile in release mode with debug symbols** using `debug = "line-tables-only"` and `force-frame-pointers = true`.
+
+6. **Document profiling findings** before optimization with flame graphs, perf stats, and bottleneck locations.
+
+## Implementation
+
+Cursor IDE and profiling tools should enforce:
+- Detect optimization commits requiring profiling data attachment
+- Verify cargo flamegraph and perf installation
+- Validate Cargo.toml has `[profile.release] debug = true`
+- Parse flame graphs to extract function time percentages (>5%)
+- Detect allocation functions in hot paths via call graph analysis
+
+## Benefits
+
+- **Evidence-based optimization** eliminates speculation
+- **High-impact changes** by focusing on hot paths (80/20 rule)
+- **Hardware-aware development** reveals cache misses and branch mispredictions
+- **Reproducible improvements** through documented baselines
+- **Efficient engineering time** avoids wasted effort on cold paths
+
+## Examples
+
+### ✅ CORRECT: Systematic profiling before optimization
+
+```rust
+// Step 1: Profile with cargo flamegraph
+// $ cargo flamegraph --bin data_processor
+// Result: process_records() consumes 62% CPU time
+
+// Step 2: Analyze with perf
+// $ perf stat -e cache-misses ./target/release/data_processor
+// Result: 31% cache miss rate
+
+// Step 3: Document baseline
+/// Performance Profile (2025-01-30)
+/// Bottleneck: process_records() consumes 62% CPU time
+/// Hardware: 31% cache miss rate
+/// Root cause: Random memory access (hash lookups)
+pub fn process_records(records: &[Record], lookup: &HashMap<u32, String>) -> Vec<String> {
+    records.iter()
+        .map(|r| lookup.get(&r.id).cloned().unwrap_or_default())
+        .collect()
+}
+
+// Step 4: Optimize based on profiling
+/// OPTIMIZED: Replaced HashMap with sorted Vec
+/// Result: Cache miss 8%, process_records() 21% CPU (3x improvement)
+pub fn process_records_optimized(records: &[Record], lookup: &[(u32, String)]) -> Vec<String> {
+    records.iter()
+        .map(|r| {
+            lookup.binary_search_by_key(&r.id, |(k, _)| *k)
+                .ok()
+                .map(|idx| lookup[idx].1.clone())
+                .unwrap_or_default()
+        })
+        .collect()
+}
+```
+
+### ✅ CORRECT: Call graph analysis reveals dynamic dispatch
+
+```bash
+# Generate call graph
+$ perf record --call-graph dwarf ./target/release/processor
+$ perf report --stdio --no-children
+
+# Output shows:
+# 45.23%  <dyn MyTrait>::process
+# Analysis: Dynamic dispatch in hot path
+```
+
+```rust
+// BEFORE: Dynamic dispatch
+pub fn process_batch(items: &[Box<dyn MyTrait>]) {
+    for item in items {
+        item.process(); // Vtable lookup overhead
+    }
+}
+
+// AFTER: Static dispatch with enum
+pub enum ProcessorType {
+    TypeA(TypeAProcessor),
+    TypeB(TypeBProcessor),
+}
+
+impl ProcessorType {
+    pub fn process(&self) {
+        match self {
+            Self::TypeA(p) => p.process(),
+            Self::TypeB(p) => p.process(),
+        }
+    }
+}
+```
+
+### ❌ INCORRECT: Optimization without profiling
+
+```rust
+// WRONG: Assumed string concatenation was bottleneck
+// Changed to Cow based on intuition without evidence
+pub fn format_output(data: &[Record]) -> String {
+    let prefix: Cow<'static, str> = Cow::Borrowed("Result: ");
+    data.iter()
+        .map(|r| format!("{}{}", prefix, r.value))
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+// Should have profiled: format!() only 2% time, real bottleneck elsewhere
+```
+
+### ❌ INCORRECT: Profiling debug build
+
+```bash
+# WRONG: Profiling unoptimized debug build
+$ cargo build
+$ cargo flamegraph --bin processor
+# Result: Misleading data, different from release performance
+
+# CORRECT: Profile release with debug symbols
+$ cargo flamegraph --release --bin processor
+```

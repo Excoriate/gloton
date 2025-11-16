@@ -1,0 +1,115 @@
+---
+description: "Enforce structured logging patterns using tracing macros, appropriate log levels, contextual fields, and event composition"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Logging Patterns
+
+## Description
+
+Enforce structured logging patterns using `tracing` macros with appropriate log levels, structured fields, and contextual information. This rule ensures log events provide rich diagnostic data for debugging and operational monitoring.
+
+## Rule
+
+1. **Use `tracing` over `log` crate** - Prefer `tracing::{trace, debug, info, warn, error}` macros for superior structured logging and span integration; use `tracing-log` crate to convert `log` records when needed
+
+2. **Apply appropriate log levels** - Use `trace!` for extremely verbose diagnostics, `debug!` for development debugging, `info!` for normal operations, `warn!` for conditions requiring attention, `error!` for conditions requiring immediate action
+
+3. **Use structured fields for contextual data** - Add key-value pairs with `info!(user_id = %id, "User logged in")`, use display (`%`) or debug (`?`) formatting, avoid string interpolation for structured data
+
+4. **Compose rich log events** - Include actionable context (what, why, relevant state), add error details with `error = %e, error_type = std::any::type_name_of_val(&e)`, record input/output characteristics, avoid redundant fields
+
+## Implementation
+
+**Cursor IDE enforcement:**
+- Detect `println!`, `eprintln!`, or `log::*` macro usage
+- Suggest `tracing::*` macros with structured fields
+- Validate structured field usage (key-value pairs)
+- Verify appropriate log level for context
+- Use `clippy::print_stdout`, `clippy::print_stderr` lints
+
+## Benefits
+
+- **Rich diagnostic context** - Structured fields enable powerful log queries and filtering
+- **Consistent logging** - Standardized macros improve maintainability
+- **Better debugging** - Contextual information accelerates root cause analysis
+- **Log aggregation** - Structured logs integrate seamlessly with log management systems
+- **Performance** - Tracing's zero-cost abstractions minimize logging overhead
+
+## Examples
+
+### ✅ CORRECT: Structured logging with tracing
+
+```rust
+use tracing::{info, warn, error, debug};
+
+/// Process user data with structured logging
+pub async fn process_user_data(user_id: &str, data: &[u8]) -> Result<ProcessedData, Error> {
+    info!(
+        user_id = %user_id,
+        data_size = data.len(),
+        "Starting user data processing"
+    );
+
+    if data.len() > MAX_SIZE {
+        warn!(
+            user_id = %user_id,
+            data_size = data.len(),
+            max_size = MAX_SIZE,
+            "Data size exceeds maximum, truncating"
+        );
+    }
+
+    debug!(user_id = %user_id, "Validating data format");
+
+    match validate_and_process(data).await {
+        Ok(result) => {
+            info!(
+                user_id = %user_id,
+                result_size = result.len(),
+                "User data processing completed successfully"
+            );
+            Ok(result)
+        }
+        Err(e) => {
+            error!(
+                user_id = %user_id,
+                error = %e,
+                error_type = std::any::type_name_of_val(&e),
+                data_size = data.len(),
+                "User data processing failed"
+            );
+            Err(e)
+        }
+    }
+}
+```
+
+### ❌ INCORRECT: Unstructured logging or println
+
+```rust
+use log::{info, error};  // ❌ Using log crate instead of tracing
+
+pub async fn process_user_data(user_id: &str, data: &[u8]) -> Result<ProcessedData, Error> {
+    // ❌ Using println! instead of structured logging
+    println!("Processing user data for {}", user_id);
+
+    // ❌ String interpolation instead of structured fields
+    info!("Data size: {}", data.len());
+
+    // ❌ No contextual information
+    println!("Starting validation");
+
+    match validate_and_process(data).await {
+        Ok(result) => {
+            println!("Processing complete"); // ❌ Minimal context
+            Ok(result)
+        }
+        Err(e) => {
+            error!("Error occurred: {}", e); // ❌ Generic error without context
+            Err(e)
+        }
+    }
+}
+```

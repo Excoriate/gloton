@@ -1,0 +1,155 @@
+---
+description: "Enforce proper markdown header formatting and semantic hierarchy standards"
+globs: ["**/*.md", "**/*.markdown"]
+alwaysApply: true
+---
+
+# Markdown Header Hierarchy Standards
+
+## Description
+
+Enforce proper markdown header formatting and semantic hierarchy. Headers MUST use hash symbols (#) with correct hierarchy progression, proper formatting, and consistent spacing conventions. This ensures accessible, parseable, and consistently structured documentation.
+
+**Scope**: All markdown files repository-wide, all header levels (H1-H6).
+
+## Rule
+
+Execute the following header formatting requirements:
+
+1. **Header Syntax**:
+   - Use hash symbols (# ## ###) for all headers
+   - Prohibit underline-style headers (==== or ----)
+   - Prohibit bold text as headers (**Header Text**)
+   - Include single space between hash symbols and header text
+
+2. **Semantic Hierarchy**:
+   - Follow logical level progression (don't skip levels)
+   - Example: # → ## → ### (NEVER # → ###)
+   - Start headers at line beginning (no leading whitespace)
+   - Use one H1 (#) per document (document title)
+
+3. **Formatting Standards**:
+   - Prohibit italic or bold formatting in header text
+   - Prohibit trailing punctuation (periods, colons) in headers
+   - Use sentence case for headers (not Title Case or ALL CAPS)
+
+4. **Validation Scope**:
+   - Apply to all headers in markdown files
+   - Check hierarchy consistency within each file
+   - Validate header formatting on save and during editing
+
+## Implementation
+
+Cursor IDE will enforce this rule by:
+
+- Validating header syntax in real-time during typing
+- Checking hierarchy levels with skip-level warnings
+- Auto-correcting common header formatting errors
+- Integrating with outline view to show document structure
+- Highlighting headers with incorrect formatting
+- Providing quick-fix actions for common violations
+- Suggesting proper header levels based on context
+
+## Benefits
+
+1. **Semantic Structure**: Clear document hierarchy for readers, parsers, and accessibility tools
+2. **Accessibility**: Screen readers rely on proper header hierarchy for navigation
+3. **Navigation**: Table of contents generation requires correct header structure
+4. **Consistency**: Uniform header styling across all documentation
+5. **Parseable**: Automated tools can reliably extract document structure
+6. **Maintainable**: Clear hierarchy simplifies document reorganization
+
+## Examples
+
+### ✅ Correct Header Hierarchy
+
+```markdown
+# Document Title
+
+Introduction paragraph describing the document.
+
+## Section 1
+
+Section content with proper hierarchy.
+
+### Subsection 1.1
+
+Subsection content demonstrating logical progression.
+
+### Subsection 1.2
+
+More subsection content at same level.
+
+## Section 2
+
+Another top-level section.
+
+### Subsection 2.1
+
+Properly nested subsection.
+```
+
+### ❌ Incorrect Header Patterns
+
+```markdown
+**Section Title**          ❌ Bold text, not a header
+
+  # Indented Header        ❌ Leading whitespace
+
+###Skipped Level           ❌ Jumped from H1 to H3, no space after ###
+
+# Header With Period.      ❌ Trailing punctuation
+
+## ALLCAPS HEADER           ❌ All caps (use sentence case)
+
+Section Title
+=============              ❌ Underline style (use # instead)
+
+## *Italic Header*         ❌ Italic formatting in header
+```
+
+### Quick Fix Examples
+
+**Before (Violations)**:
+```markdown
+**Introduction**
+###Getting Started
+  # Setup Guide
+## Configuration.
+TROUBLESHOOTING
+===============
+```
+
+**After (Corrected)**:
+```markdown
+# Introduction
+
+## Getting started
+
+# Setup guide
+
+## Configuration
+
+# Troubleshooting
+```
+
+### Hierarchy Progression Examples
+
+**✅ Correct Progression**:
+```markdown
+# Level 1 (H1)
+## Level 2 (H2)
+### Level 3 (H3)
+#### Level 4 (H4)
+### Back to Level 3 (H3)
+## Back to Level 2 (H2)
+# New Level 1 (H1)
+```
+
+**❌ Incorrect Progression**:
+```markdown
+# Level 1 (H1)
+### Level 3 (H3)        ❌ Skipped H2
+## Level 2 (H2)         ❌ Going backwards in hierarchy
+##### Level 5 (H5)      ❌ Skipped H3 and H4
+```

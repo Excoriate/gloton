@@ -1,0 +1,82 @@
+---
+description: "Enforce best practices for documentation in Rust code including public API documentation, code examples, and module documentation"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Documentation Best Practices
+
+## Description
+
+Enforce best practices for writing documentation in Rust code. High-quality documentation creates usable, maintainable, and trustworthy libraries and applications, covering crate-level descriptions to detailed function specifications.
+
+## Rule
+
+1. **Document every public item** - Apply `///` documentation to all public items (`mod`, `struct`, `enum`, `fn`, `trait`, `macro`); comment complex private item logic
+
+2. **Start with crate-level documentation** - Include crate-level documentation in `src/lib.rs` using `//!` comments as the documentation front page
+
+3. **Write clear and concise summaries** - Begin doc comments with short summaries, follow with blank line and detailed explanations if needed
+
+4. **Provide runnable code examples** - Include runnable code examples in ````rust` blocks, hide setup code with `#`, use `#[should_panic]` or `compile_fail` attributes as appropriate
+
+5. **Document panics, errors, and safety** - Add `# Panics` sections explaining panic conditions, `# Errors` describing error variants, `# Safety` specifying unsafe function invariants
+
+6. **Use intra-doc links** - Connect related items with intra-doc links using `[`ItemName`]` or `[`function()`]` syntax for improved navigability
+
+## Implementation
+
+- **`cargo doc`** - Primary documentation generation tool (`cargo doc --open` to build and view)
+- **Clippy lints:**
+  - `clippy::missing_docs_in_private_items` - Enforces private item documentation
+  - `clippy::missing_errors_doc` - Warns for `Result` functions without `# Errors`
+  - `clippy::missing_panics_doc` - Warns for functions that can panic without `# Panics`
+
+## Benefits
+
+- **Usability** - Good documentation makes libraries easier to learn and use
+- **Maintainability** - Clear explanations simplify understanding and modification
+- **Correctness** - Documentation forces edge case consideration, tested examples ensure accuracy
+- **Trust** - Well-documented code appears more professional and trustworthy
+
+## Examples
+
+### ✅ CORRECT: Well-documented function
+
+```rust
+use std::num::ParseIntError;
+
+/// Parses a string into a `u32`.
+///
+/// This function is a simple wrapper around `str::parse`.
+///
+/// # Arguments
+///
+/// * `s` - A string slice to parse.
+///
+/// # Examples
+///
+/// ```
+/// use my_crate::parse_number;
+///
+/// assert_eq!(parse_number("42").unwrap(), 42);
+/// ```
+///
+/// # Errors
+///
+/// Returns a [`ParseIntError`] if the string does not represent a valid `u32`.
+pub fn parse_number(s: &str) -> Result<u32, ParseIntError> {
+    s.parse()
+}
+```
+
+### ❌ INCORRECT: Poorly documented function
+
+```rust
+use std::num::ParseIntError;
+
+// ❌ Missing summary, examples, and error documentation
+pub fn do_stuff(s: &str) -> Result<u32, ParseIntError> {
+    s.parse()
+}
+```

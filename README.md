@@ -1,167 +1,251 @@
-![dvm](https://socialify.git.ci/justjavac/dvm/image?description=1&font=Bitter&forks=1&issues=1&language=1&logo=https%3A%2F%2Fdeno.land%2Fimages%2Fartwork%2Fogdeno.png&name=1&owner=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Light)
+# Rust CLI Template
 
-English | [简体中文](./README_zh-cn.md)
+A minimal, production-ready Rust CLI boilerplate with [clap](https://github.com/clap-rs/clap) for argument parsing and [just](https://github.com/casey/just) for task automation.
 
-## Installation
+## Features
 
-You can install it using the installers below, or download a release binary from
-the [releases page](https://github.com/justjavac/dvm/releases).
+- ✅ **Minimal dependencies** - Only `clap` for CLI parsing
+- ✅ **Modern Rust** - Edition 2021 with idiomatic patterns
+- ✅ **Just recipes** - Pre-configured build, test, lint, and run tasks
+- ✅ **Production-ready** - Includes formatting, linting, and CI workflows
+- ✅ **Example command** - Working `hello` command to demonstrate structure
 
-**With Shell:**
+## Quick Start
+
+### Installation
+
+**Clone and customize:**
 
 ```sh
-curl -fsSL https://dvm.deno.dev | sh
+# Clone this template
+git clone https://github.com/yourusername/yourproject.git
+cd yourproject
+
+# Update Cargo.toml with your project details
+# - name
+# - authors
+# - description
+# - repository
+
+# Build the project
+just build
 ```
 
-**With PowerShell:**
-
-```powershell
-irm https://dvm.deno.dev | iex
-```
+**Or download a release binary from the [releases page](https://github.com/yourusername/yourproject/releases).**
 
 ## Usage
 
 ```console
-➜  ~  dvm --help
-Deno Version Manager - Easy way to manage multiple active deno versions.
+➜  ~  gloton --help
+A simple CLI tool
 
-Usage: dvm.exe <COMMAND>
+Usage: gloton <COMMAND>
 
 Commands:
-  completions  Generate shell completions
-  info         Show dvm info.
-  install      Install deno executable to the given version. [aliases: i, add]
-  list         List all installed versions [aliases: ls, ll, la]
-  list-remote  List all released versions [aliases: lr, ls-remote]
-  uninstall    Uninstall a given version [aliases: un, unlink, rm, remove]
-  use          Use a given version or a semver range or a alias to the range.
-  alias        Set or unset an alias
-  activate     Activate Dvm
-  deactivate   Deactivate Dvm
-  doctor       Fixing dvm specific environment variables and other issues
-  upgrade      Upgrade aliases to the latest version, use `self` to upgrade dvm itself
-  exec         Execute deno command with a specific deno version
-  clean        Clean dvm cache
-  registry     Change registry that dvm fetch from
-  update       Update remove version list local cache to the latest
-  help         Print this message or the help of the given subcommand(s)
+  hello  Say hello to the world
+  help   Print this message or the help of the given subcommand(s)
 
 Options:
-  -h, --help     Print help information
-  -V, --version  Print version information
+  -h, --help     Print help
+  -V, --version  Print version
 
 EXAMPLE:
-  dvm install 1.3.2     Install v1.3.2 release
-  dvm install           Install the latest available version
-  dvm use 1.0.0         Use v1.0.0 release
-  dvm use latest        Use the latest alias that comes with dvm, equivalent to *
-  dvm use canary        Use the canary version of the Deno
-
-NOTE:
-  To remove, delete, or uninstall dvm - just remove the `$DVM_DIR` folder (usually `~/.dvm`)
+  gloton hello              # Output: Hello, World!
+  gloton hello --name Alex  # Output: Hello, Alex!
 ```
 
 ### Verify installation
 
-To verify that dvm has been installed, do:
+To verify that the CLI has been installed, do:
 
 ```bash
-dvm -V
+gloton --version
 ```
 
-which should output dvm's version if the installation was successful.
+which should output the version if the installation was successful.
 
-### Initialisation
+## Development
 
-Calling `dvm` will creates an `~/.dvm/` directory if it doesn't exist, and all
-installed versions of deno will put into `~/.dvm`.
+### Prerequisites
 
-```
-➜  ~  dvm
-Creating /Users/justjavac/.dvm
-```
+- **Rust** (edition 2021+) - Install via [rustup](https://rustup.rs/)
+- **Just** (optional but recommended) - Install via `cargo install just` or `brew install just`
 
-### .dvmrc
+### Available Commands
 
-You can let dvm to writing config to current directery by add the `--local` flag
-to `dvm use`. Afterwards, `dvm use`, `dvm install` will use the version
-specified in the `.dvmrc` file if no version is supplied on the command line.
-
-For example, to make dvm default to the `1.17.0` release for the current
-directory:
+The `Justfile` provides convenient recipes for common tasks:
 
 ```bash
-dvm use --local 1.17.0
+# Show all available recipes
+just
+
+# Build in debug mode
+just build
+
+# Build in release mode
+just build-release
+
+# Run the CLI with arguments
+just run hello --name World
+
+# Quick hello example
+just hello
+just hello "Alex"
+
+# Development workflow (format + check + run)
+just dev
+
+# Run all tests
+just test
+
+# Format code with rustfmt
+just fmt
+
+# Check formatting
+just fmt-check
+
+# Run clippy linter (strict mode)
+just clippy
+
+# Clean build artifacts
+just clean
+
+# Full CI check (fmt + clippy + test + build)
+just ci
+
+# Install binary locally
+just install
 ```
 
-Then when someone else with a copy of your project and run dvm:
+## Project Structure
 
-```plain
-$ dvm use
-No version input detect, try to use version in .dvmrc file
-Using semver range: 1.17.0
-Writing to home folder config
-Now using deno 1.17.0
+```
+.
+├── Cargo.toml          # Project metadata and dependencies
+├── Justfile            # Task automation recipes
+├── src/
+│   ├── main.rs         # Entry point and command handling
+│   └── cli.rs          # CLI structure and command definitions
+└── README.md           # This file
+```
+
+## Customizing the Template
+
+### Adding New Commands
+
+1. **Define command in `src/cli.rs`:**
+
+```rust
+#[derive(Subcommand)]
+pub enum Commands {
+    Hello { ... },
+
+    /// Your new command description
+    YourCommand {
+        /// Command argument
+        #[arg(short, long)]
+        arg_name: String,
+    },
+}
+```
+
+2. **Handle command in `src/main.rs`:**
+
+```rust
+match cli.command {
+    Commands::Hello { name } => { ... },
+
+    Commands::YourCommand { arg_name } => {
+        // Your command logic here
+        println!("Executing with: {}", arg_name);
+    }
+}
+```
+
+3. **Test it:**
+
+```bash
+just dev
+```
+
+### Adding Dependencies
+
+Add dependencies to `Cargo.toml`:
+
+```toml
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }  # Example
+```
+
+Then run:
+
+```bash
+cargo build
 ```
 
 ## Example
 
-### Listing versions
+### Running the hello command
 
-List all installed versions:
-
-```
-➜  ~  dvm list
- * 0.1.0
-   0.1.1
-   0.1.2
-```
-
-The version with a asterisk(`*`) means that this version is the version
-currently in use.
-
-### Switching version
+Default greeting:
 
 ```
-➜  ~  dvm use 1.1.0
-now use deno 1.1.0
-➜  ~  dvm use 1.2.0
-deno v1.2.0 is not installed. Use `dvm install 1.2.0` to install it first.
+➜  ~  gloton hello
+Hello, World!
 ```
+
+Custom greeting:
+
+```
+➜  ~  gloton hello --name Rustacean
+Hello, Rustacean!
+```
+
+Using the short flag:
+
+```
+➜  ~  gloton hello -n Alex
+Hello, Alex!
+```
+
+## Quality Checks
+
+This template includes strict quality checks:
+
+```bash
+# All checks must pass (run this before committing)
+just ci
+```
+
+Which runs:
+- ✅ `cargo fmt --check` - Code formatting
+- ✅ `cargo clippy -- -D warnings` - Linting (zero warnings allowed)
+- ✅ `cargo test` - All tests
+- ✅ `cargo build` - Compilation
 
 ## Compatibility
 
-- The Shell installer can be used on Windows with
-  [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about),
-  [MSYS](https://www.msys2.org) or equivalent set of tools.
-
-## Caveats
-
-### unzip is **required**
-
-The program [`unzip`](https://linux.die.net/man/1/unzip) is a requirement for
-the Shell installer.
-
-```sh
-$ curl -fsSL https://deno.land/x/dvm/install.sh | sh
-Error: unzip is required to install dvm (see: https://github.com/justjavac/dvm#unzip-is-required).
-```
-
-**When does this issue occur?**
-
-During the `install.sh` process, `unzip` is used to extract the zip archive.
-
-**How can this issue be fixed?**
-
-You can install unzip via `brew install unzip` on MacOS or
-`apt-get install unzip -y` on Linux(Ubuntu,Debian,Deepin).
-
-### Powershell on Windows is **required**
-
-Currently, we use PowerShell profile to set environment variables due to various
-reasons, so it's required.
+- **Rust**: Edition 2021 (Rust 1.56+)
+- **Platforms**: macOS, Linux, Windows
+- **Package Manager**: Cargo
 
 ## License
 
-Deno Version Manager(dvm) is released under the MIT License. See the bundled
-[LICENSE](./LICENSE) file for details.
+Released under the MIT License. See the bundled [LICENSE](./LICENSE) file for details.
+
+---
+
+## Template Checklist
+
+When using this template for a new project:
+
+- [ ] Update `Cargo.toml` (name, authors, description, repository)
+- [ ] Update this `README.md` (replace "gloton" with your project name)
+- [ ] Update `LICENSE` file with your name/organization
+- [ ] Remove the example `hello` command (or keep as reference)
+- [ ] Add your actual commands in `src/cli.rs` and `src/main.rs`
+- [ ] Update Justfile recipes if needed
+- [ ] Set up CI/CD (GitHub Actions, GitLab CI, etc.)
+- [ ] Create release workflow
+- [ ] Update repository URL and clone instructions above

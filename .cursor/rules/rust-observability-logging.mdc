@@ -1,0 +1,34 @@
+---
+description: "⚠️ DEPRECATED - Split into specialized rules for logging patterns, tracing instrumentation, and observability integration"
+globs: ["**/*.rs"]
+alwaysApply: false
+---
+
+# Rust Observability and Logging (DEPRECATED)
+
+## Description
+
+**⚠️ DEPRECATION NOTICE - This rule has been deprecated as of 2025-01-30.**
+
+**Reason:** Monolithic observability rule combined disparate concerns (logging patterns, span instrumentation, metrics integration) reducing cohesion and maintainability.
+
+**Migration Path:**
+- For **structured logging** (tracing macros, log levels, structured fields) → Use `rust-logging-patterns.mdc`
+- For **span instrumentation** (#[instrument], span creation, span relationships) → Use `rust-tracing-instrumentation.mdc`
+- For **observability integration** (metrics, error tracking, distributed tracing export) → Use `rust-observability-integration.mdc`
+
+## Rule
+
+This rule is deprecated. Refer to the specialized replacement rules listed above.
+
+## Implementation
+
+No longer enforced. Use the replacement rules for specific observability concerns.
+
+## Benefits
+
+The deprecated rule has been split into cohesive, focused rules that provide better organization and maintainability.
+
+## Examples
+
+See the replacement rules for current examples of observability best practices.

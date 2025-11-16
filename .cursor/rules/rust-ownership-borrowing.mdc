@@ -1,0 +1,147 @@
+---
+description: "Enforce best practices for Rust's ownership, borrowing, and lifetime system to ensure memory safety and prevent common errors"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Ownership, Borrowing, and Lifetimes
+
+## Description
+
+Enforce best practices for using Rust's ownership, borrowing, and lifetime system. These three interconnected concepts work as a unified system to ensure memory safety: ownership dictates when values are dropped, borrowing allows flexible access without transferring ownership, and lifetimes ensure references don't outlive their data.
+
+## Rule
+
+1. **Prefer borrowing over moving ownership** when passing data to functions, unless the function logically needs to consume the value.
+
+2. **Adhere to borrowing rules**: At any time, have either one mutable reference OR any number of immutable references, but not both.
+
+3. **Understand and use lifetimes when needed**: Provide explicit lifetime annotations when the compiler cannot determine reference validity.
+
+4. **Use slices for flexible views** into collections with `&[T]` or `&str` to accept various collection types.
+
+5. **Use appropriate smart pointers** for advanced ownership scenarios:
+   - `Box<T>` for heap allocation
+   - `Rc<T>` for single-threaded shared ownership
+   - `Arc<T>` for multi-threaded shared ownership
+   - `RefCell<T>` for interior mutability
+
+## Implementation
+
+Clippy lints:
+- `clippy::needless_clone` - Warns about unnecessary clones
+- `clippy::mut_mut` - Warns about mutable reference from mutable reference
+- `clippy::needless_lifetimes` - Warns when explicit lifetimes are not needed
+
+The Rust compiler (`rustc`) is the primary enforcer of ownership and borrowing rules.
+
+## Benefits
+
+- **Memory safety** eliminates dangling pointers, use-after-free, and data races at compile time
+- **Performance** with no runtime overhead from garbage collection
+- **Concurrency safety** makes concurrent code safer through ownership system
+
+## Examples
+
+### ✅ CORRECT: Borrowing instead of moving
+
+```rust
+struct Item;
+
+fn process_item(item: &Item) {
+    // Borrows item, caller retains ownership
+}
+
+fn main() {
+    let item = Item;
+    process_item(&item);
+    process_item(&item); // Can still use item
+}
+```
+
+### ✅ CORRECT: Respecting borrowing rules
+
+```rust
+fn main() {
+    let mut data = vec![1, 2, 3];
+
+    // Multiple immutable references allowed
+    let r1 = &data;
+    let r2 = &data;
+    println!("{:?}, {:?}", r1, r2);
+
+    // Single mutable reference allowed
+    let m1 = &mut data;
+    m1.push(4);
+}
+```
+
+### ✅ CORRECT: Explicit lifetime annotations
+
+```rust
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
+}
+```
+
+### ✅ CORRECT: Using slices for flexibility
+
+```rust
+fn print_slice(s: &str) {
+    println!("{}", s);
+}
+
+fn main() {
+    let s1 = String::from("hello");
+    print_slice(&s1);       // Works with String
+    print_slice(&s1[..2]);  // Works with slice
+    print_slice("world");   // Works with literal
+}
+```
+
+### ✅ CORRECT: Smart pointers for shared ownership
+
+```rust
+use std::rc::Rc;
+use std::sync::Arc;
+use std::cell::RefCell;
+
+// Rc for single-threaded shared ownership
+let a = Rc::new(5);
+let b = Rc::clone(&a);
+
+// Arc for multi-threaded shared ownership
+let x = Arc::new(10);
+let y = Arc::clone(&x);
+
+// RefCell for interior mutability
+let data = RefCell::new(vec![1, 2, 3]);
+let mut mut_ref = data.borrow_mut();
+mut_ref.push(4);
+```
+
+### ❌ INCORRECT: Taking ownership unnecessarily
+
+```rust
+// Bad: Takes ownership, forcing caller to clone or give up item
+fn process_item_owned(item: Item) {
+    // ...
+}
+
+fn main() {
+    let item = Item;
+    process_item_owned(item);
+    // process_item_owned(item); // Compile error: use of moved value
+}
+```
+
+### ❌ INCORRECT: Violating borrowing rules
+
+```rust
+fn main() {
+    let mut data = vec![1, 2, 3];
+    let r3 = &data;
+    let m2 = &mut data; // Compile error: cannot borrow as mutable
+    println!("{:?}, {:?}", r3, m2);
+}
+```

@@ -1,0 +1,215 @@
+---
+description: "Enforce soundness verification through Miri testing, safety proofs, and formal verification patterns for unsafe Rust code"
+globs: ["**/*.rs", "**/.cargo/config.toml"]
+alwaysApply: true
+---
+
+# Rust Soundness Verification
+
+## Description
+
+Enforce rigorous verification practices for unsafe Rust code including Miri testing for undefined behavior detection, safety proof documentation, and formal verification using tools like Kani and Prusti. Unsafe code correctness cannot be assumed—it must be verified through multiple independent techniques ranging from dynamic testing to formal proofs.
+
+## Rule
+
+1. **Miri testing** for all unsafe code paths:
+   - Add Miri tests for ALL unsafe code paths
+   - Run Miri in CI for every commit touching unsafe code
+   - Configure strict Miri flags (-Zmiri-strict-provenance, -Zmiri-symbolic-alignment-check)
+   - Test edge cases: null pointers, unaligned access, data races
+
+2. **Safety proof documentation** with structured proofs:
+   - Document preconditions, invariants, postconditions
+   - Include verification evidence (Miri tests, property tests, manual reviews)
+   - Use debug_assert! for invariant checking in debug builds
+
+3. **Formal verification integration** using Kani or Prusti:
+   - Add verification proofs for critical unsafe functions
+   - Run verification tools in CI on unsafe code changes
+   - Document verification status in function comments
+
+4. **Property-based testing** with proptest:
+   - Test memory safety (no out-of-bounds access)
+   - Test thread safety (no data races under concurrent load)
+   - Test correctness (invariants hold for all inputs)
+
+5. **Sanitizer integration** (AddressSanitizer, ThreadSanitizer):
+   - Run AddressSanitizer on memory-unsafe operations
+   - Run ThreadSanitizer on concurrent unsafe code
+   - Add sanitizer runs to CI pipeline
+
+## Implementation
+
+Cursor IDE should enforce:
+- Detect unsafe code without corresponding Miri tests
+- Flag missing safety proof documentation
+- Identify untested unsafe code paths in coverage reports
+- Configure Miri runner in .cargo/config.toml
+- Integrate Kani/Prusti verification in build
+- Fail CI on Miri errors
+
+## Benefits
+
+- **Confidence** through multiple verification layers
+- **Regression prevention** via Miri tests preventing UB reintroduction
+- **Documentation** as safety proofs serve as maintenance guides
+- **Correctness** through formal verification providing mathematical certainty
+- **Security** via early UB detection preventing exploits
+
+## Examples
+
+### ✅ CORRECT: Complete Miri test coverage
+
+```rust
+/// Reads from a buffer with bounds checking.
+///
+/// # Safety
+///
+/// Caller must ensure:
+/// - `ptr` is valid and aligned
+/// - `offset < len`
+///
+/// # Safety Proof
+///
+/// Verification:
+/// - Miri test: `test_read_buffer_miri`
+/// - Property test: `test_read_buffer_proptest`
+pub unsafe fn read_buffer(ptr: *const u8, offset: usize, len: usize) -> u8 {
+    debug_assert!(!ptr.is_null());
+    debug_assert!(offset < len);
+    *ptr.add(offset)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_read_buffer_miri() {
+        let buffer = vec![1, 2, 3, 4, 5];
+        let ptr = buffer.as_ptr();
+
+        unsafe {
+            assert_eq!(read_buffer(ptr, 0, 5), 1);
+            assert_eq!(read_buffer(ptr, 4, 5), 5);
+        }
+    }
+}
+```
+
+### ✅ CORRECT: Formal verification with Kani
+
+```rust
+/// Swaps two values through raw pointers.
+///
+/// # Safety
+///
+/// - Pointers must be valid and properly aligned
+/// - Pointers must not alias unless they point to the same location
+pub unsafe fn swap_raw<T>(a: *mut T, b: *mut T) {
+    if a == b { return; }
+    let tmp = std::ptr::read(a);
+    std::ptr::copy(b, a, 1);
+    std::ptr::write(b, tmp);
+}
+
+#[cfg(kani)]
+mod verification {
+    use super::*;
+
+    #[kani::proof]
+    fn verify_swap_no_ub() {
+        let mut x: u32 = kani::any();
+        let mut y: u32 = kani::any();
+        let old_x = x;
+        let old_y = y;
+
+        unsafe {
+            swap_raw(&mut x as *mut u32, &mut y as *mut u32);
+        }
+
+        kani::assert(x == old_y, "x should equal old y");
+        kani::assert(y == old_x, "y should equal old x");
+    }
+}
+```
+
+### ✅ CORRECT: Thread safety verification
+
+```rust
+/// Thread-safe counter with verified operations.
+///
+/// # Safety Proof
+///
+/// Thread Safety: All mutations use atomic operations with SeqCst
+/// Verification: Miri test + ThreadSanitizer passed 2025-01-30
+pub struct AtomicCounter {
+    count: AtomicU64,
+}
+
+impl AtomicCounter {
+    pub fn increment(&self) -> u64 {
+        self.count.fetch_add(1, Ordering::SeqCst)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::Arc;
+    use std::thread;
+
+    #[test]
+    fn test_concurrent_access() {
+        let counter = Arc::new(AtomicCounter::new());
+        let handles: Vec<_> = (0..10)
+            .map(|_| {
+                let counter_clone = Arc::clone(&counter);
+                thread::spawn(move || {
+                    for _ in 0..1000 {
+                        counter_clone.increment();
+                    }
+                })
+            })
+            .collect();
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        assert_eq!(counter.get(), 10_000);
+    }
+}
+```
+
+### ❌ INCORRECT: Unsafe code without verification
+
+```rust
+// Bad: No Miri tests
+pub unsafe fn unverified_operation(ptr: *mut u8, offset: usize) {
+    *ptr.add(offset) = 42; // Could be UB
+}
+
+// Bad: No safety proof
+pub unsafe fn mystery_function(data: &mut [u8]) {
+    let ptr = data.as_mut_ptr();
+    std::ptr::swap(ptr, ptr.add(1));
+}
+```
+
+### ❌ INCORRECT: Missing edge case testing
+
+```rust
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_buffer_read() {
+        let buffer = vec![1, 2, 3];
+        // Only tests happy path
+        unsafe {
+            assert_eq!(read_buffer(buffer.as_ptr(), 0, 3), 1);
+        }
+        // Missing: null, misalignment, bounds violation, zero-sized types
+    }
+}
+```

@@ -1,0 +1,149 @@
+---
+description: "Enforce best practices for using Rust's type system including generics, traits, and lifetimes to create flexible and type-safe abstractions"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Type System and Generics
+
+## Description
+
+Enforce best practices for using Rust's type system focusing on generics, traits, and trait bounds. Rust's power to create zero-cost abstractions comes from the cohesive interplay of generics (abstract code over types), traits (define shared behavior), and lifetimes (ensure reference validity). Together they enable highly flexible, type-safe, and performant APIs.
+
+## Rule
+
+1. **Use generics to reduce code duplication**:
+   - Write generic functions, structs, and enums operating on abstract types
+   - Avoid separate implementations for each concrete type
+
+2. **Use trait bounds to constrain generic types**:
+   - Specify behavior generic types must implement
+   - Use `where` clauses for complex bounds (readability)
+
+3. **Use associated types** to define type families:
+   - More ergonomic than generic type parameters on traits
+   - Example: `Iterator` trait with `Item` associated type
+
+4. **Understand common standard library traits**:
+   - `Sized`: Known size at compile time (use `?Sized` for DSTs)
+   - `Clone` vs `Copy`: Explicit duplication vs bit-for-bit copy
+   - `Send` and `Sync`: Thread safety markers
+
+5. **Use const generics** for compile-time values:
+   - Abstract over constant values like array sizes
+   - Type-safe operations with sizes known at compile time
+
+## Implementation
+
+- **Compiler errors**: Primary enforcer of generics, traits, lifetimes rules
+- **Clippy lints**:
+  - `clippy::type_complexity` - Warns about overly complex types
+  - `clippy::trivially_copy_pass_by_ref` - Suggests passing Copy types by value
+
+## Benefits
+
+- **Zero-cost abstractions** via compile-time monomorphization
+- **Type safety** through trait bounds ensuring required behavior
+- **Code reusability** writing functions/structs once for many types
+
+## Examples
+
+### ✅ CORRECT: Generic function reducing duplication
+
+```rust
+fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    let mut largest = &list[0];
+    for item in list {
+        if item > largest {
+            largest = item;
+        }
+    }
+    largest
+}
+```
+
+### ✅ CORRECT: Trait bounds with where clause
+
+```rust
+use std::fmt::{Debug, Display};
+
+// Simple trait bound
+fn print_item<T: Display>(item: T) {
+    println!("{}", item);
+}
+
+// where clause for multiple bounds (more readable)
+fn process_items<T, U>(item1: T, item2: U)
+where
+    T: Display + Clone,
+    U: Debug + Send,
+{
+    // ...
+}
+```
+
+### ✅ CORRECT: Associated types
+
+```rust
+pub trait Iterator {
+    type Item; // Associated type
+    fn next(&mut self) -> Option<Self::Item>;
+}
+```
+
+### ✅ CORRECT: Const generics for array sizes
+
+```rust
+fn process_array<const N: usize>(arr: [i32; N]) {
+    println!("Array size: {}", N);
+}
+
+fn main() {
+    process_array([1, 2, 3]);       // N is 3
+    process_array([1, 2, 3, 4, 5]); // N is 5
+}
+```
+
+### ✅ CORRECT: Generic struct
+
+```rust
+struct Point<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Point<T> {
+    fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+```
+
+### ❌ INCORRECT: Unreadable bounds without where
+
+```rust
+// Hard to read
+fn bad_process_items<T: Display + Clone, U: Debug + Send>(item1: T, item2: U) {
+    // ...
+}
+
+// Better with where clause
+fn good_process_items<T, U>(item1: T, item2: U)
+where
+    T: Display + Clone,
+    U: Debug + Send,
+{
+    // ...
+}
+```
+
+### ❌ INCORRECT: Code duplication without generics
+
+```rust
+// Bad: Separate implementations for each type
+fn largest_i32(list: &[i32]) -> &i32 { /* ... */ }
+fn largest_char(list: &[char]) -> &char { /* ... */ }
+
+// Good: Single generic implementation
+fn largest<T: PartialOrd>(list: &[T]) -> &T { /* ... */ }
+```

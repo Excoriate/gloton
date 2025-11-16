@@ -1,0 +1,55 @@
+---
+repos:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Pre-Commit Hooks (general purpose)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        name: 📝 Remove trailing whitespace
+        description: Remove trailing whitespace from files
+      - id: end-of-file-fixer
+        name: 📝 Ensure files end with newline
+        description: Ensure files end with a newline character
+      - id: forbid-new-submodules
+        name: 📦 Prevent submodule creation
+        description: Block creation of new git submodules
+      - id: check-added-large-files
+        name: 📦 Block large file commits
+        description: Detect and prevent committing large files
+      - id: check-illegal-windows-names
+        name: 📁 Validate Windows filenames
+        description: Check for filenames that are illegal on Windows
+      - id: detect-private-key
+        name: 🔒 Detect hardcoded secrets
+        description: Detect private keys and secrets in committed files
+      - id: check-merge-conflict
+        name: 📦 Detect conflict markers
+        description: Check for merge conflict markers in files
+      - id: check-executables-have-shebangs
+        name: ⏚ Verify shebang presence
+        description: Ensure executable files have shebang lines
+      - id: check-shebang-scripts-are-executable
+        name: ⏚ Verify script permissions
+        description: Ensure files with shebangs are executable
+      - id: check-case-conflict
+        name: 📁 Check case sensitivity
+        description: Detect case conflicts in filenames
+      - id: check-symlinks
+        name: 🔗 Check symlink validity
+        description: Verify symlinks are valid
+      - id: destroyed-symlinks
+        name: 🔗 Detect broken symlinks
+        description: Find and report broken symlinks
+      - id: check-json
+        name: ✅ Validate JSON syntax
+        description: Check JSON files for syntax errors
+      - id: pretty-format-json
+        name: 📝 Format JSON files
+        description: Automatically format JSON files
+      - id: check-docstring-first
+        name: 📝 Check docstring placement
+        description: Ensure docstrings appear before code
+        args:
+          - '--autofix'

@@ -1,0 +1,156 @@
+---
+description: "Enforce best practices for unsafe block usage, raw pointer operations, and basic FFI patterns to prevent Undefined Behavior"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Unsafe Code Patterns
+
+## Description
+
+The `unsafe` keyword provides five "unsafe superpowers": dereferencing raw pointers, calling unsafe functions/FFI, accessing/modifying mutable statics, implementing unsafe traits, and accessing union fields. Misuse leads to **Undefined Behavior (UB)**. This rule enforces best practices for unsafe blocks, raw pointers, and basic FFI to ensure unsafe code correctness. **Key principle:** Unsafe code must be minimal, well-documented, and wrapped in safe abstractions.
+
+## Rule
+
+1. **Unsafe block organization**:
+   - **Minimize scope**: Keep unsafe blocks small, ideally one unsafe operation
+   - **Extract helpers**: Create small, private unsafe helper functions for auditing
+   - **Never expose** unsafe fn in public API unless impossible to create safe abstraction
+   - **Document every unsafe block** with `// Safety:` comment explaining invariants
+
+2. **Raw pointer operations**:
+   - **Creation**: Use `&T as *const T` or `std::ptr::addr_of!` for packed structs
+   - **Dereferencing**: Always check `.is_null()` before dereferencing, ensure alignment
+   - **Reading/writing**: Use `ptr.read()` and `ptr.write()` for unaligned/overlapping memory
+   - **Arithmetic**: Use `.offset()` or `.add()` with bounds checks; use `.wrapping_add()` for wrapping
+
+3. **Basic FFI patterns**:
+   - **extern "C" functions**: Use `#[no_mangle]` for C-callable functions
+   - **Null validation**: Always validate pointer arguments from C for null
+   - **Error handling**: Return error codes/sentinel values (panicking across FFI is UB)
+   - **#[repr(C)]**: Always use on structs/enums passed across FFI boundary
+
+## Implementation
+
+Clippy lints:
+- `clippy::missing_safety_doc` - Enforces `# Safety` documentation
+- `clippy::undocumented_unsafe_blocks` - Suggests comments for unsafe blocks
+- `clippy::not_unsafe_ptr_arg_deref` - Checks for raw pointer dereferencing in safe functions
+- `clippy::cast_ptr_alignment` - Checks for pointer misalignment
+
+Runtime verification:
+- Use `debug_assert!` for pointer validity checks in debug builds
+- Run Miri to detect UB at runtime
+
+## Benefits
+
+- **Clarity and auditability** via small, well-documented unsafe blocks
+- **Reduced UB risk** through following proven unsafe patterns
+- **Safe abstractions** as cornerstone of idiomatic Rust
+
+## Examples
+
+### ✅ CORRECT: Minimal scope and clear safety comment
+
+```rust
+let mut data = [1, 2, 3];
+let ptr = data.as_mut_ptr();
+let len = data.len();
+
+unsafe {
+    // Safety: The pointer is valid for `len` elements.
+    let slice = std::slice::from_raw_parts_mut(ptr, len);
+    slice.sort();
+}
+```
+
+### ✅ CORRECT: Null check before dereferencing
+
+```rust
+pub unsafe fn read_validated(ptr: *const u8) -> u8 {
+    // Safety: Caller guarantees non-null, aligned pointer
+    assert!(!ptr.is_null(), "Pointer must not be null");
+    assert!(ptr as usize % std::mem::align_of::<u8>() == 0, "Misaligned");
+    *ptr
+}
+```
+
+### ✅ CORRECT: FFI with null checks
+
+```rust
+#[no_mangle]
+pub extern "C" fn process_data(ptr: *const u8, len: usize) -> i32 {
+    if ptr.is_null() {
+        return -1; // Error code
+    }
+
+    unsafe {
+        // Safety: Validated non-null above, len provided by caller
+        let slice = std::slice::from_raw_parts(ptr, len);
+        // Process slice...
+        0 // Success
+    }
+}
+```
+
+### ✅ CORRECT: C-compatible struct
+
+```rust
+#[repr(C)]
+pub struct Point {
+    x: f64,
+    y: f64,
+}
+
+#[no_mangle]
+pub extern "C" fn create_point(x: f64, y: f64) -> *mut Point {
+    Box::into_raw(Box::new(Point { x, y }))
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn destroy_point(ptr: *mut Point) {
+    if !ptr.is_null() {
+        // Safety: Pointer created by create_point, validated non-null
+        drop(Box::from_raw(ptr));
+    }
+}
+```
+
+### ❌ INCORRECT: Unsafe without documentation
+
+```rust
+// Bad: No safety comment
+pub unsafe fn process(ptr: *mut u8) {
+    *ptr = 42;
+}
+```
+
+### ❌ INCORRECT: No null check
+
+```rust
+// Bad: Missing null check
+pub extern "C" fn bad_ffi(ptr: *const u8) -> u32 {
+    unsafe { *ptr } // UB if ptr is null
+}
+```
+
+### ❌ INCORRECT: Large unsafe scope
+
+```rust
+// Bad: Too much code in unsafe block
+unsafe {
+    let ptr = data.as_ptr();
+    let len = data.len();
+    // Many lines of code...
+    // Hard to audit what's actually unsafe
+    *ptr.add(len - 1)
+}
+
+// Better: Minimal scope
+let ptr = data.as_ptr();
+let len = data.len();
+unsafe {
+    // Safety: ptr valid for len elements
+    *ptr.add(len - 1)
+}
+```

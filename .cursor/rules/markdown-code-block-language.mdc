@@ -1,0 +1,101 @@
+---
+description: "Enforce mandatory language specification for all fenced code blocks in markdown files"
+globs: ["**/*.md", "**/*.markdown"]
+alwaysApply: true
+---
+
+# Markdown Code Block Language Specification
+
+## Description
+
+Enforce mandatory language specification for all fenced code blocks in markdown files. Every code block MUST include an explicit language identifier (e.g., ```javascript, ```bash, ```python) to enable proper syntax highlighting and improve documentation clarity.
+
+**Scope**: All markdown files repository-wide, including nested code blocks in lists and quotes.
+
+## Rule
+
+Execute the following requirements for all fenced code blocks:
+
+1. **Specify language identifier** for all fenced code blocks: ```javascript, ```bash, ```python
+2. **Prohibit generic code blocks** without language specification (bare ```)
+3. **Use appropriate identifiers**:
+   - Programming: `javascript`, `typescript`, `python`, `go`, `rust`, `java`, `c`, `cpp`
+   - Shell: `bash`, `sh`, `zsh`, `powershell`
+   - Markup: `html`, `css`, `xml`, `yaml`, `json`, `markdown`
+   - Other: `sql`, `dockerfile`, `makefile`, `text`
+4. **Apply to all contexts**: Main content, nested in lists, blockquotes, or tables
+
+## Implementation
+
+Cursor IDE will enforce this rule by:
+
+- Auto-suggesting language identifiers during code block creation (type ``` + language name)
+- Highlighting generic code blocks in real-time as violations
+- Providing quick-fix suggestions based on code content analysis
+- Scanning all markdown files for non-compliant code blocks
+- Offering batch correction tools for multiple violations
+
+## Benefits
+
+1. **Syntax Highlighting**: Enable proper code rendering in all markdown viewers and editors
+2. **Clarity**: Language identifier explicitly communicates code purpose and context
+3. **Tooling Support**: Many documentation tools rely on language tags for processing and analysis
+4. **Consistency**: Uniform standard prevents ambiguity across all documentation
+5. **Accessibility**: Screen readers and assistive tools better interpret properly tagged code
+
+## Examples
+
+### ✅ Correct Code Blocks
+
+```markdown
+# JavaScript Example
+```javascript
+function greet(name) {
+  console.log(`Hello, ${name}!`);
+}
+```
+
+# Shell Script Example
+```bash
+#!/bin/bash
+echo "Hello, World!"
+```
+
+# Plain Text Example
+```text
+This is plain text without syntax highlighting
+```
+```
+
+### ❌ Incorrect Code Blocks
+
+```markdown
+# No Language Specified (VIOLATION)
+```
+function noLanguage() {
+  return "This will fail validation";
+}
+```
+
+# Content suggests language but not specified (VIOLATION)
+```
+#!/bin/bash
+echo "Language identifier missing"
+```
+```
+
+### Quick Fix Examples
+
+**Before (Violation)**:
+```markdown
+```
+const config = { api: "https://example.com" };
+```
+```
+
+**After (Corrected)**:
+```markdown
+```javascript
+const config = { api: "https://example.com" };
+```
+```

@@ -1,0 +1,97 @@
+---
+description: "Enforce best practices for building command-line interfaces using clap including command structure, argument handling, and user experience"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust CLI Best Practices with clap
+
+## Description
+
+Enforce best practices for building command-line interfaces using the `clap` crate. Emphasize the derive API for defining clear command structures, proper argument handling, and creating positive user experiences with helpful error messages and documentation.
+
+## Rule
+
+1. **Use the derive API for command structure** - Apply `#[derive(Parser)]` macros for declarative, concise, and less error-prone CLI definitions instead of the builder API
+
+2. **Organize with subcommands** - Create hierarchical structure with `#[command(subcommand)]` and `enum Commands` for CLIs with multiple distinct actions
+
+3. **Provide a good user experience** - Use doc comments (`///`) on structs and fields to generate help messages, include `#[command(author, version, about)]` attributes
+
+4. **Use value enums for predefined choices** - Apply `ValueEnum` derive for arguments accepting fixed value sets to enable validation and shell completion
+
+## Implementation
+
+Cursor IDE and linters should enforce:
+- Detect manual parsing of `std::env::args()` and suggest `clap` usage
+- Validate `#[derive(Parser)]` presence on CLI structs
+- Check for missing doc comments on public commands and arguments
+
+## Benefits
+
+- **User-friendly** - Automatically generated help messages and validation improve user experience
+- **Maintainable** - Declarative derive API makes CLI structure readable and modifiable
+- **Robust** - Clap handles argument parsing complexity, reducing input handling bugs
+- **Modern** - Follows current Rust community best practices for CLI development
+
+## Examples
+
+### ✅ CORRECT: Comprehensive CLI with subcommands
+
+```rust
+use clap::{Parser, Subcommand};
+use std::path::PathBuf;
+
+/// A fictional versioning CLI
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Sets a custom config file
+    #[arg(short, long, value_name = "FILE")]
+    config: Option<PathBuf>,
+
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Clones a repository
+    Clone {
+        /// The remote repository to clone from
+        remote: String,
+    },
+    /// Pushes changes to a remote
+    Push {
+        /// The remote to push to
+        remote: String,
+    },
+}
+
+fn main() {
+    let cli = Cli::parse();
+
+    match &cli.command {
+        Commands::Clone { remote } => {
+            println!("Cloning from '{}'", remote);
+        }
+        Commands::Push { remote } => {
+            println!("Pushing to '{}'", remote);
+        }
+    }
+}
+```
+
+### ❌ INCORRECT: Manual argument parsing
+
+```rust
+// ❌ Manual parsing is verbose, error-prone, and lacks features
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 {
+        println!("Hello, {}!", args[1]);
+    } else {
+        println!("Please provide a name.");
+    }
+}
+```

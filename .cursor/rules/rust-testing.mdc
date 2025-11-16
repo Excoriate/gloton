@@ -1,0 +1,149 @@
+---
+description: "Enforce best practices for testing in Rust including test organization, writing effective tests, and controlling test execution"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Testing Best Practices
+
+## Description
+
+Enforce best practices for writing automated tests in Rust. A robust testing strategy combines unit tests (small, focused tests verifying individual components), integration tests (testing the public API), and documentation tests (examples in docs that are compiled and run). These test types are complementary and work together via `cargo test` to provide comprehensive correctness verification.
+
+## Rule
+
+1. **Organize tests properly**:
+   - Place **unit tests** in a `tests` module inside the same file, annotated with `#[cfg(test)]`
+   - Place **integration tests** in a `tests` directory at crate root (separate crates testing public API)
+   - Use `#[cfg(test)]` to exclude test code from production builds
+
+2. **Write clear, focused tests**:
+   - Follow Arrange-Act-Assert (AAA) pattern
+   - Use appropriate assertion macros: `assert!`, `assert_eq!`, `assert_ne!`
+   - Test for panics with `#[should_panic]`
+   - Return `Result<T, E>` from tests to use `?` operator
+
+3. **Control test execution**:
+   - Run all tests: `cargo test`
+   - Run single test: `cargo test test_name`
+   - Run tests in module: `cargo test module_name::`
+   - Run ignored tests: `cargo test -- --ignored`
+   - Show output: `cargo test -- --show-output`
+
+4. **Test async code** using async test runners like `tokio::test`:
+   ```rust
+   #[tokio::test]
+   async fn test_async() { ... }
+   ```
+
+## Implementation
+
+- **`cargo test`**: Primary tool for running all test types
+- **Clippy lints**: `clippy::cognitive_complexity` identifies functions too complex to test
+- **Code coverage tools**: cargo-tarpaulin or grcov measure test coverage
+
+## Benefits
+
+- **Correctness** ensures code behaves as expected
+- **Regression prevention** catches unintended side effects
+- **Confident refactoring** allows code changes with safety
+- **Executable documentation** tests serve as usage examples
+
+## Examples
+
+### ✅ CORRECT: Unit tests in same file
+
+```rust
+// src/my_module.rs
+fn private_function() -> bool {
+    true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_private_function() {
+        assert!(private_function());
+    }
+}
+```
+
+### ✅ CORRECT: Integration tests in tests/ directory
+
+```rust
+// tests/integration_test.rs
+use my_crate::public_function;
+
+#[test]
+fn test_public_api() {
+    assert_eq!(public_function(), 42);
+}
+```
+
+### ✅ CORRECT: Testing for panics
+
+```rust
+#[test]
+#[should_panic(expected = "out of bounds")]
+fn test_panic() {
+    let v = vec![1];
+    v[10]; // Should panic
+}
+```
+
+### ✅ CORRECT: Using Result in tests
+
+```rust
+#[test]
+fn test_with_result() -> Result<(), String> {
+    if 2 + 2 == 4 {
+        Ok(())
+    } else {
+        Err(String::from("math is broken"))
+    }
+}
+```
+
+### ✅ CORRECT: Async testing
+
+```rust
+#[cfg(test)]
+mod tests {
+    use tokio;
+
+    async fn my_async_function() -> bool {
+        true
+    }
+
+    #[tokio::test]
+    async fn test_async() {
+        assert!(my_async_function().await);
+    }
+}
+```
+
+### ❌ INCORRECT: Missing test organization
+
+```rust
+// Bad: Tests not in #[cfg(test)] module
+#[test]
+fn test_something() {
+    // This gets compiled even in release builds
+}
+```
+
+### ❌ INCORRECT: Unclear test structure
+
+```rust
+#[test]
+fn bad_test() {
+    let x = 2;
+    let y = x + 2;
+    assert_eq!(y, 4);
+    let z = y * 2;
+    assert_eq!(z, 8);
+    // Multiple unrelated assertions, unclear purpose
+}
+```

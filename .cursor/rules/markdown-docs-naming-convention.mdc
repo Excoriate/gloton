@@ -1,0 +1,152 @@
+---
+description: "Enforce docs/ folder naming: directories use NN_description, files use NN-description.md patterns"
+globs: ["docs/**/*"]
+alwaysApply: true
+---
+
+# Documentation Naming Convention Standards
+
+## Description
+
+Enforce consistent naming conventions within the docs/ folder structure to maintain organizational clarity and discoverability. All directories and markdown files MUST follow numerical prefixing patterns that facilitate logical ordering and hierarchical organization.
+
+**Scope**: All directories and markdown files within docs/ folder structure.
+
+## Rule
+
+Execute the following documentation naming requirements:
+
+1. **Directory Naming Convention**:
+   - Use format: `NN_description` where NN is two-digit number
+   - Examples: `00_context_engineering`, `01_overview`, `02_concepts`
+   - For nested numbering: `NN.N_description` (e.g., `04.1_anthropic_prompt_engineering`)
+   - Additional sub-numbering: `NN_N_description` (e.g., `01_1_product_requirement_promps`)
+   - Use lowercase with underscores as word separators
+   - Numbers MUST be zero-padded for proper sorting
+
+2. **Markdown File Naming Convention**:
+   - Use format: `NN-description.md` where NN is two-digit number
+   - Examples: `00-prp-codebase-analysis.md`, `02-2-1-context-engineering.md`
+   - For complex numbering: `NN-N-description.md`
+   - Version suffixes permitted: `NN-N-description-v2.md`
+   - Use lowercase with dashes as word separators
+   - Numbers MUST be zero-padded for proper sorting
+
+3. **Hierarchical Consistency**:
+   - Maintain logical numerical progression within each directory level
+   - Avoid gaps in numbering sequences when possible
+   - Use consistent numbering depth within same directory level
+   - Reserve 00 prefix for foundational or overview content
+
+4. **Descriptive Standards**:
+   - Directory and file descriptions MUST be clear and specific
+   - Use abbreviated forms consistently (e.g., `prp` for "product requirement prompts")
+   - Avoid redundant terms in nested structures
+   - Maintain consistency with existing abbreviated terminology
+
+5. **ASCII Compatibility**:
+   - Use only ASCII characters, numbers, underscores, and dashes
+   - Prohibit spaces, special characters, or Unicode symbols
+   - Ensure case consistency (all lowercase)
+
+## Implementation
+
+Cursor IDE will enforce this rule by:
+
+- Validating directory and file names against established patterns
+- Suggesting proper naming format when creating new docs/ content
+- Highlighting violations in real-time during editing
+- Providing auto-completion based on existing numbering patterns
+- Checking for numerical sequence gaps and suggesting appropriate numbers
+- Triggering validation on file/directory creation and renaming
+
+## Benefits
+
+1. **Logical Ordering**: Numerical prefixes ensure consistent, predictable file ordering
+2. **Hierarchical Clarity**: Nested numbering patterns reveal document relationships
+3. **Discoverability**: Consistent structure improves navigation and search
+4. **Version Control**: Clear naming facilitates git history tracking and diffs
+5. **Scalability**: Pattern supports growth without structural reorganization
+
+## Examples
+
+### ✅ Correct Directory Structure
+
+```text
+docs/
+├── 00_context_engineering/
+│   ├── 00-prp-codebase-analysis.md
+│   ├── 01-1-prp-repository-github-configure.md
+│   └── 01-2-prp-repository-github-workflows.md
+├── 01_overview/
+│   ├── 00-about-this-repo.md
+│   └── 01-quick-start.md
+├── 02_concepts/
+│   └── 02-2-1-context-engineering.md
+└── 11_references/
+    ├── 08_1_internal/
+    └── 08_2_external/
+```
+
+### ❌ Incorrect Naming Patterns
+
+```text
+docs/
+├── context-engineering/           ❌ Missing numerical prefix
+├── 1_overview/                    ❌ Not zero-padded
+│   ├── About This Repo.md         ❌ Spaces, capitalization
+│   └── quick_start.md             ❌ Underscore instead of dash
+├── 02-concepts/                   ❌ Dash instead of underscore
+└── References/                    ❌ No numerical prefix, capitalized
+    ├── internal/                  ❌ No numerical prefix
+    └── external docs/             ❌ Space in name
+```
+
+### Directory Naming Examples
+
+**✅ Correct**:
+- `00_context_engineering`
+- `01_overview`
+- `02_concepts`
+- `11_references`
+- `04.1_anthropic_prompt_engineering`
+- `01_1_product_requirement_promps`
+
+**❌ Incorrect**:
+- `context-engineering` (missing number prefix)
+- `1_overview` (not zero-padded)
+- `02-concepts` (dash instead of underscore)
+- `References` (capitalized, no number)
+- `4.1_anthropic` (not zero-padded)
+
+### File Naming Examples
+
+**✅ Correct**:
+- `00-prp-codebase-analysis.md`
+- `01-1-prp-repository-github-configure.md`
+- `02-2-1-context-engineering.md`
+- `01-1-prp-repository-github-configure-v2.md`
+
+**❌ Incorrect**:
+- `prp-codebase-analysis.md` (missing number prefix)
+- `1-1-prp-repository.md` (not zero-padded)
+- `02_1_context_engineering.md` (underscore instead of dash)
+- `PRP Codebase Analysis.md` (spaces, capitalization)
+
+### Common Violations and Fixes
+
+**Directory Violations**:
+```text
+❌ context engineering/     →  ✅ 00_context_engineering/
+❌ 1_Overview/              →  ✅ 01_overview/
+❌ 02-concepts/             →  ✅ 02_concepts/
+❌ References/              →  ✅ 11_references/
+```
+
+**File Violations**:
+```text
+❌ Overview.md              →  ✅ 00-overview.md
+❌ 1-quick-start.md         →  ✅ 01-quick-start.md
+❌ context_engineering.md   →  ✅ 02-context-engineering.md
+❌ PRP Template Base.md     →  ✅ 01-prp-template-base.md
+```

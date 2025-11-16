@@ -1,0 +1,109 @@
+---
+description: "Enforce proper cross-document linking with explicit markdown syntax and relative paths"
+globs: ["**/*.md", "**/*.markdown"]
+alwaysApply: true
+---
+
+# Markdown Cross-Reference Standards
+
+## Description
+
+Enforce proper cross-document linking standards in markdown files. All references to other documents or sections MUST use explicit markdown link syntax with relative paths. Bare document names or vague references are prohibited.
+
+**Scope**: All cross-document references, section links, and related documentation citations.
+
+## Rule
+
+Execute the following cross-reference requirements:
+
+1. **Use explicit link syntax**: `[text](./path/to/file.md)` for all document references
+2. **Prohibit bare document names**: Never reference documents by name alone ("See CONTRIBUTING.md")
+3. **Prohibit bare URLs**: All URLs must have link text
+4. **Use relative paths**:
+   - Same directory: `./file.md`
+   - Parent directory: `../file.md`
+   - Grandparent: `../../file.md`
+5. **Include file extensions**: Always use `.md` in links
+6. **Use anchor syntax** for section references: `[text](./file.md#section-title)`
+7. **Format anchors correctly**: Lowercase with dashes (`#my-section-title`)
+8. **Validate link targets**: All referenced files and sections MUST exist
+
+## Implementation
+
+Cursor IDE will enforce this rule by:
+
+- Validating link syntax in real-time during editing
+- Detecting broken links and missing anchor targets
+- Providing auto-completion for file paths relative to current document
+- Suggesting anchor links based on existing headers in target files
+- Highlighting bare document name references as violations
+- Offering quick-fix actions to convert bare names to proper links
+
+## Benefits
+
+1. **Navigation Reliability**: Links work correctly in all markdown viewers (GitHub, GitLab, VS Code, web)
+2. **Refactoring Safety**: IDEs can automatically update links when files move or rename
+3. **Validation**: Broken links detected automatically via linting and CI/CD
+4. **Clarity**: Explicit links show relationship structure between documents
+5. **Discoverability**: Clear cross-references improve documentation navigation
+
+## Examples
+
+### ✅ Correct Cross-References
+
+```markdown
+See the [Setup section](./CONTRIBUTING.md#setup) for installation instructions.
+
+For more details, refer to the [API documentation](./docs/api-reference.md).
+
+Check the [configuration guide](../config/settings.md#database-configuration).
+
+Review [authentication patterns](../../security/auth.md#oauth2-flow) for implementation.
+```
+
+### ❌ Incorrect Cross-References
+
+```markdown
+❌ See the "Setup" section in the contribution guide.
+   (No explicit link)
+
+❌ Refer to CONTRIBUTING.md for more details.
+   (Document name without link syntax)
+
+❌ See [this document](CONTRIBUTING.md).
+   (Missing ./ for relative path)
+
+❌ Check the setup documentation.
+   (Vague reference, no link)
+
+❌ Visit https://example.com/docs
+   (Bare URL without link text)
+```
+
+### Anchor Link Examples
+
+```markdown
+✅ CORRECT:
+# My Section Title
+
+[Link to section](#my-section-title)
+[Link in other file](./other.md#my-section-title)
+
+❌ INCORRECT:
+[Link with spaces](#My Section Title)  ❌ Spaces not converted to dashes
+[Link with caps](#My-Section-Title)    ❌ Capitals not converted to lowercase
+```
+
+### Quick Fix Patterns
+
+**Before (Violation)**:
+```markdown
+See the API Reference for authentication details.
+Refer to SECURITY.md for security policies.
+```
+
+**After (Corrected)**:
+```markdown
+See the [API Reference](./docs/api-reference.md#authentication) for authentication details.
+Refer to [SECURITY.md](./SECURITY.md) for security policies.
+```

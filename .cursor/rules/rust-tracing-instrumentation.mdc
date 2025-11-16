@@ -1,0 +1,184 @@
+---
+description: "Enforce tracing span instrumentation using #[instrument] macro, manual span creation, span relationships, and event recording within execution contexts"
+globs: ["**/*.rs"]
+alwaysApply: true
+---
+
+# Rust Tracing Instrumentation
+
+## Description
+
+Enforce tracing span instrumentation using `#[instrument]` macro and manual span creation to track execution contexts, operation boundaries, and causal relationships. This rule focuses exclusively on **where and how spans wrap execution contexts**, independent of what events are logged (rust-logging-patterns) or what external systems consume span data (rust-observability-integration).
+
+## Rule
+
+1. **Use #[instrument] for function tracing**:
+   - Apply to public API functions, async functions, significant operations
+   - Specify log level: `#[instrument(level = Level::INFO)]`
+   - Skip sensitive/large arguments: `#[instrument(skip(password))]`
+   - Automatic span creation reduces boilerplate
+
+2. **Create manual spans for significant operations**:
+   - Use `tracing::info_span!("operation_name")` for important boundaries
+   - Enter spans with `let _guard = span.enter()` for RAII tracking
+   - Add contextual fields: `info_span!("process", user_id = %id)`
+   - Prefer manual spans for granular control in complex functions
+
+3. **Establish span relationships**:
+   - Child spans inherit parent context automatically
+   - Use `Span::current()` to reference active span
+   - Record events within spans: `tracing::info!(parent: &span, "Event")`
+   - Follow spans across async boundaries with `.instrument()`
+
+4. **Record events within span contexts**:
+   - Events inherit span fields automatically
+   - Use `span.record()` to add fields dynamically
+   - Avoid empty spans (spans without events add overhead)
+
+## Implementation
+
+Cursor IDE enforcement:
+- Detect public functions without `#[instrument]` macro
+- Suggest `#[instrument]` with appropriate level and skip parameters
+- Check for manual span creation in complex operations
+- Verify events occur within span contexts (not orphaned)
+- Flag excessive span creation (spans without events)
+
+## Benefits
+
+- **Distributed tracing** enables end-to-end request flow visualization
+- **Performance profiling** via span duration reveals bottlenecks
+- **Causal debugging** through span hierarchies showing execution paths
+- **Async context tracking** propagates spans across async boundaries
+- **Low overhead** through zero-cost abstractions when disabled
+
+## Examples
+
+### ✅ CORRECT: Comprehensive span instrumentation
+
+```rust
+use tracing::{info, error, instrument, info_span, Level};
+
+#[derive(Debug)]
+pub struct DataService {
+    name: String,
+}
+
+impl DataService {
+    #[instrument(level = Level::DEBUG)]
+    pub fn new(name: String) -> Self {
+        info!(name = %name, "Creating new DataService");
+        Self { name }
+    }
+
+    #[instrument(level = Level::INFO, skip(self, data))]
+    pub async fn process_request(
+        &self,
+        request_id: &str,
+        data: &[u8],
+    ) -> Result<ProcessedData, Error> {
+        info!(request_id = %request_id, data_size = data.len(), "Starting");
+
+        // Manual span for sub-operation
+        let validation_span = info_span!(
+            "validate_data",
+            request_id = %request_id,
+            data_size = data.len()
+        );
+        let _guard = validation_span.enter();
+
+        info!("Validating data format");
+        let valid = validate(data).await?;
+        validation_span.record("is_valid", &valid);
+
+        drop(_guard);
+
+        // Another manual span
+        let process_span = info_span!("transform_data", request_id = %request_id);
+        let _guard = process_span.enter();
+
+        match transform(data).await {
+            Ok(result) => {
+                info!(result_size = result.len(), "Complete");
+                Ok(result)
+            }
+            Err(e) => {
+                error!(error = %e, "Failed");
+                Err(e)
+            }
+        }
+    }
+}
+
+#[instrument(level = Level::INFO)]
+pub async fn orchestrate_workflow(workflow_id: &str) -> Result<(), Error> {
+    let parallel_span = info_span!("parallel_tasks", workflow_id = %workflow_id);
+
+    let task1 = tokio::spawn(
+        async move {
+            info!("Task 1 executing");
+        }.instrument(parallel_span.clone()) // Propagate span
+    );
+
+    task1.await??;
+    Ok(())
+}
+```
+
+### ❌ INCORRECT: Missing span instrumentation
+
+```rust
+// Bad: No instrumentation
+pub struct DataService {
+    name: String,
+}
+
+impl DataService {
+    // Bad: Public constructor without #[instrument]
+    pub fn new(name: String) -> Self {
+        println!("Creating service: {}", name);
+        Self { name }
+    }
+
+    // Bad: Async function without instrumentation
+    pub async fn process_request(
+        &self,
+        request_id: &str,
+        data: &[u8],
+    ) -> Result<ProcessedData, Error> {
+        // No span context
+        info!("Processing request");
+
+        // No span for sub-operation
+        let valid = validate(data).await?;
+
+        // Events without span context
+        match transform(data).await {
+            Ok(result) => {
+                info!("Complete");
+                Ok(result)
+            }
+            Err(e) => {
+                error!("Failed: {}", e);
+                Err(e)
+            }
+        }
+    }
+}
+
+// Bad: Async without span propagation
+pub async fn orchestrate_workflow(workflow_id: &str) -> Result<(), Error> {
+    let task1 = tokio::spawn(async move {
+        // Orphaned context - no span propagation
+        info!("Task 1");
+    });
+    task1.await??;
+    Ok(())
+}
+```
+
+**Why incorrect patterns fail:**
+- Missing `#[instrument]` loses execution context in distributed traces
+- No manual spans creates flat, uninformative trace hierarchies
+- Events without spans are orphaned (can't correlate with requests)
+- Async tasks without `.instrument()` lose parent context, breaking causality

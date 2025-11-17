@@ -244,13 +244,9 @@ graph TB
 | **Adapter Layer** | GitHub/GitLab/Azure DevOps HTTP Clients | Protocol translation (internal ↔ external APIs) |
 | **External Layer** | Provider APIs, Local Filesystem | External dependencies and persistent storage |
 
-### Key Design Principles
+### Design Principles
 
-- **Adapter Pattern**: All external interactions (HTTP clients, Git operations) use adapters, they can be easily replaced with different implementations if needed (e.g. different HTTP clients, different Git operations, etc.).
-- **Layered Architecture**: Clear separation of concerns (User → Application → Adapters → External), each layer has a single responsibility.
-- **Idempotent**: Safe to re-run daily, it will only clone new repositories and update existing ones.
-- **State Management**: The state of the repositories is stored in the SQLite database, and is used to track the repositories that have been synchronized.
-- **Simplicity is the ultimate sophistication**: Keep it simple. Unnecessary complexity, dependencies, or patters that make the code harder to understand or maintain are not allowed.
+Gloton follows core design principles that ensure simplicity, reliability, and maintainability. For detailed information on design philosophy, architectural patterns, and technical standards, see [Design Principles & Technical Guidelines](./01-engineering-principles.md).
 
 ## Workflow
 
@@ -288,63 +284,103 @@ The required configuration is per-provider:
 
 Primary commands perform mutating operations (cloning, syncing repositories).
 
+#### `init` command
+
+This command is to ingest and pull all the repositories from a given provider and root path to the local machine. It basically **connects** for the first time a remote provider and path (E.g.: organization and/or projects) to the local machine.
+
 ```bash
 # Initialize repositories from remote provider (first-time setup)
 gloton init <PROVIDER> <ROOT_PATH> [OPTIONS]
+  # Optional arguments:
   --depth <N>              # Clone with limited history depth
   --filter <PATTERN>       # Clone only repos matching pattern
   --exclude <PATTERN>      # Exclude repos matching pattern
+```
 
+The global optional arguments are:
+
+| Argument | Description |
+|----------|-------------|
+| `--depth <N>` | Clone with limited history depth. |
+| `--filter <PATTERN>` | Clone only repositories matching pattern. |
+| `--exclude <PATTERN>` | Exclude repositories matching pattern. |
+
+##### Azure DevOps
+
+For [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops&tabs=preview-page), the arguments are:
+
+| Argument | Description |
+|----------|-------------|
+| `--organization <ORG_NAME>` | The organization name of the remote provider. |
+
+##### GitHub
+
+For [GitHub](https://docs.github.com/en/organizations/organizing-members-into-teams/creating-a-team), the arguments are:
+
+| Argument | Description |
+|----------|-------------|
+| `--organization <ORG_NAME>` | The organization name of the remote provider. |
+
+##### GitLab
+
+For [GitLab](https://docs.gitlab.com/ee/user/project/working_with_projects.html), the arguments are:
+
+| Argument | Description |
+|----------|-------------|
+| `--group <GROUP_NAME>` | The group name of the remote provider. |
+| `--subgroup <SUBGROUP_NAME>` | The subgroup name of the remote provider. |
+
+##### Global Optional Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `--depth <N>` | Clone with limited history depth. |
+| `--filter <PATTERN>` | Clone only repositories matching pattern. |
+| `--exclude <PATTERN>` | Exclude repositories matching pattern. |
+#### `sync` command
+
+This command is to sync the repositories from a given provider and root path to the local machine, when it was already ingested using the [`init` command](#init-command).
+
+```bash
 # Synchronize repositories (pull updates, clone new repos)
 gloton sync <PROVIDER> <ROOT_PATH> [OPTIONS]
-  --pull-only              # Skip cloning new repos
-  --clone-only             # Skip pulling existing repos
+  --pull-only              # Pull only the repositories that are already cloned
+  --clone-only             # Clone only the repositories that are not already cloned
   --parallel <N>           # Concurrent operations (default: 4)
 ```
 
-### Secondary Commands
+**Examples:**
 
-Secondary commands provide read-only operations (inspection, status).
+**Basic usage** - Sync all repositories (pull existing, clone new):
 
 ```bash
-# List repositories with scope control
-gloton list <PROVIDER> <ROOT_PATH> [OPTIONS]
-  --local                  # List local repos (default)
-  --remote                 # List remote repos
-  --both                   # List both with sync indicators
-  --diff                   # Show local-only and remote-only repos
+# Daily sync for Azure DevOps project
+gloton sync ado platform-services
 
-# Show synchronization status
-gloton status <PROVIDER> <ROOT_PATH> [OPTIONS]
-  --summary                # Show summary only (default)
-  --detailed               # Show per-repository status
+# Daily sync for GitHub organization
+gloton sync github acme-corp
 ```
 
-### Management Commands
-
-Management commands handle cleanup and configuration.
+**Pull-only mode** - Update existing repositories without cloning new ones:
 
 ```bash
-# Remove local repositories not in remote
-gloton clean <PROVIDER> <ROOT_PATH> [OPTIONS]
-  --dry-run                # Preview without deleting
-  --force                  # Skip confirmation prompts
-
-# Manage configuration
-gloton config <SUBCOMMAND> [KEY] [VALUE]
-  list                     # List all configuration
-  get <KEY>                # Get configuration value
-  set <KEY> <VALUE>        # Set configuration value
-  unset <KEY>              # Remove configuration value
+# Quick update of already-cloned repositories
+gloton sync ado platform-services --pull-only
 ```
 
-### Global Flags
-
-Available for all commands:
+**Clone-only mode** - Clone new repositories without pulling existing ones:
 
 ```bash
---verbose, -v              # Verbose output (debug logs)
---quiet, -q                # Quiet mode (errors only)
---help, -h                 # Show help
---version                  # Show version
+# Discover and clone new repositories added to the organization
+gloton sync github acme-corp --clone-only
+```
+
+**Parallel execution** - Speed up sync with concurrent operations:
+
+```bash
+# Sync with 8 concurrent operations (useful for large organizations)
+gloton sync ado platform-services --parallel 8
+
+# Conservative sync with 2 concurrent operations (low bandwidth)
+gloton sync gitlab startup-labs --parallel 2
 ```

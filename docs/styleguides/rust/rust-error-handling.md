@@ -21,10 +21,10 @@ alwaysApply: true
 
 Effective error handling in Rust is a cohesive system that combines several key elements:
 
-1.  **Error Representation**: Using enums like `Result<T, E>` and `Option<T>` to represent the possibility of failure or absence of a value.
-2.  **Error Propagation**: The `?` operator provides a standardized, ergonomic way to propagate errors up the call stack.
-3.  **Custom Error Types**: Defining custom error types allows for rich, contextual error information, which is crucial for debugging and reliable operation.
-4.  **Panic Strategy**: Distinguishing between recoverable errors (which should be handled) and unrecoverable errors (which should cause a panic).
+1. **Error Representation**: Using enums like `Result<T, E>` and `Option<T>` to represent the possibility of failure or absence of a value.
+2. **Error Propagation**: The `?` operator provides a standardized, ergonomic way to propagate errors up the call stack.
+3. **Custom Error Types**: Defining custom error types allows for rich, contextual error information, which is crucial for debugging and reliable operation.
+4. **Panic Strategy**: Distinguishing between recoverable errors (which should be handled) and unrecoverable errors (which should cause a panic).
 
 These components are interdependent. `Result` is the foundation for recoverable errors, the `?` operator makes working with `Result` manageable, custom error types make `Result` more informative, and a clear panic strategy defines the boundary between expected failures and catastrophic bugs.
 
@@ -38,8 +38,8 @@ This rule enforces best practices for error handling in Rust. Robust error handl
 
 **MANDATORY**: Distinguish between operations that can fail and values that can be absent.
 
--   **`Result<T, E>`**: Use for operations that can succeed (returning `Ok(T)`) or fail (returning `Err(E)`). This is for *recoverable* errors.
--   **`Option<T>`**: Use when a value could be something (`Some(T)`) or nothing (`None`). This is not for errors, but for managing optionality.
+- **`Result<T, E>`**: Use for operations that can succeed (returning `Ok(T)`) or fail (returning `Err(E)`). This is for *recoverable* errors.
+- **`Option<T>`**: Use when a value could be something (`Some(T)`) or nothing (`None`). This is not for errors, but for managing optionality.
 
 ```rust
 // ✅ CORRECT: Using Result for a fallible operation
@@ -122,9 +122,9 @@ For simple applications, `anyhow` can be a good choice for its ease of use, but 
 
 **MANDATORY**: `panic!` should be reserved for unrecoverable errors that indicate a bug in the program.
 
--   **Avoid `unwrap()`**: In production code, `unwrap()` can lead to unexpected panics. Prefer `match` or `if let` to handle `Result` and `Option`.
--   **Use `expect()` in tests and examples**: `expect()` is like `unwrap()` but with a custom message, which is useful for explaining why you expect an operation to succeed.
--   **Document Panics**: If a function has conditions under which it will panic, document them clearly in a `# Panics` section.
+- **Avoid `unwrap()`**: In production code, `unwrap()` can lead to unexpected panics. Prefer `match` or `if let` to handle `Result` and `Option`.
+- **Use `expect()` in tests and examples**: `expect()` is like `unwrap()` but with a custom message, which is useful for explaining why you expect an operation to succeed.
+- **Document Panics**: If a function has conditions under which it will panic, document them clearly in a `# Panics` section.
 
 ```rust
 // ✅ CORRECT: Handling a Result properly
@@ -149,22 +149,22 @@ fn test_file_creation() {
 
 ## Implementation
 
--   **Clippy Lints**:
-    -   `clippy::unwrap_used`: Warns about the use of `unwrap()`.
-    -   `clippy::expect_used`: Warns about the use of `expect()`.
-    -   `clippy::result_unit_err`: Warns about `Result` with `()` as the error type.
--   **IDE Integration**: IDEs can provide quick fixes to replace `unwrap()` with proper error handling.
+- **Clippy Lints**:
+  - `clippy::unwrap_used`: Warns about the use of `unwrap()`.
+  - `clippy::expect_used`: Warns about the use of `expect()`.
+  - `clippy::result_unit_err`: Warns about `Result` with `()` as the error type.
+- **IDE Integration**: IDEs can provide quick fixes to replace `unwrap()` with proper error handling.
 
 ## Benefits
 
--   **Robustness**: Explicitly handling errors makes programs more resilient to failure.
--   **Maintainability**: Clear error types and propagation make the code easier to understand and debug.
--   **Security**: Prevents unexpected panics that could lead to denial-of-service vulnerabilities.
--   **Developer Experience**: The `?` operator and custom error types make error handling in Rust both ergonomic and powerful.
+- **Robustness**: Explicitly handling errors makes programs more resilient to failure.
+- **Maintainability**: Clear error types and propagation make the code easier to understand and debug.
+- **Security**: Prevents unexpected panics that could lead to denial-of-service vulnerabilities.
+- **Developer Experience**: The `?` operator and custom error types make error handling in Rust both ergonomic and powerful.
 
 ## References
 
--   [The Rust Book: Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html)
--   [`thiserror` Crate](https://docs.rs/thiserror/)
--   [`anyhow` Crate](https://docs.rs/anyhow/)
--   [Rust API Guidelines: Error Handling](https://rust-lang.github.io/api-guidelines/error-handling.html)
+- [The Rust Book: Error Handling](https://doc.rust-lang.org/book/ch09-00-error-handling.html)
+- [`thiserror` Crate](https://docs.rs/thiserror/)
+- [`anyhow` Crate](https://docs.rs/anyhow/)
+- [Rust API Guidelines: Error Handling](https://rust-lang.github.io/api-guidelines/error-handling.html)

@@ -54,12 +54,14 @@ All markdown files in the `docs/` directory, `.claude/rules/includes/`, or `.cur
 ## Implementation
 
 **IDE Integration:**
+
 - File pattern matching targets all markdown files within `docs/`, `.claude/rules/includes/`, and `.cursor/rules/includes/` directory structures
 - Global application (`alwaysApply: true`) ensures continuous enforcement across all documentation and include files
 - Real-time validation prevents incomplete metadata from being saved
 - Contextual suggestions based on document type and existing metadata patterns
 
 **Technical Enforcement:**
+
 1. **File Creation**: New markdown files in `docs/` or include directories trigger metadata template insertion
 2. **File Editing**: Missing or malformed frontmatter generates warnings
 3. **Content Review**: Incomplete metadata fields highlighted during editing
@@ -67,6 +69,7 @@ All markdown files in the `docs/` directory, `.claude/rules/includes/`, or `.cur
 5. **Semantic Validation**: Metadata descriptions are checked for implementation-specific details that should be in document content instead
 
 **Automated Workflow Integration:**
+
 - Template generation for required frontmatter fields
 - Auto-population of `updated` field with current date
 - Validation of `status` and `category` enum values
@@ -75,16 +78,19 @@ All markdown files in the `docs/` directory, `.claude/rules/includes/`, or `.cur
 ## Benefits
 
 ### Content Organization
+
 - **Systematic Classification**: Consistent categorization enables efficient content discovery
 - **Version Tracking**: Document versioning supports change management and rollback capabilities
 - **Status Awareness**: Clear maturity indicators guide appropriate document usage
 
 ### Discoverability Enhancement
+
 - **Search Optimization**: Structured metadata improves search accuracy and filtering
 - **Content Relationships**: Cross-references create navigable documentation networks
 - **LLM Context**: Rich metadata provides essential context for AI-powered documentation tools
 
 ### Maintenance Efficiency
+
 - **Update Tracking**: Timestamp metadata enables freshness monitoring and maintenance scheduling
 - **Responsibility Clarity**: Author attribution establishes ownership and contact points
 - **Automation Support**: Standardized structure enables automated validation and processing
@@ -135,6 +141,7 @@ related: []
 ### ❌ Incorrect Implementations
 
 **Missing Required Fields:**
+
 ```markdown
 ---
 title: "Incomplete Guide"
@@ -144,6 +151,7 @@ updated: "2025-01-09"
 ```
 
 **Invalid Status Value:**
+
 ```markdown
 ---
 title: "Bad Status Example"
@@ -157,6 +165,7 @@ authors: ["author"]
 ```
 
 **Malformed Related References:**
+
 ```markdown
 ---
 title: "Bad References"
@@ -238,6 +247,7 @@ docs/
 ```
 
 **Non-Documentation Files (Rule Does Not Apply):**
+
 ```
 README.md                          ❌ Root level - no frontmatter required
 CONTRIBUTING.md                    ❌ Root level - no frontmatter required

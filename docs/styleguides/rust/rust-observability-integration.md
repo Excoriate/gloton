@@ -62,6 +62,7 @@ Enforce observability integration with external monitoring systems through metri
 ## Implementation
 
 Cursor IDE enforcement:
+
 - **Detection**: Identify operations without metrics (request handling, data processing)
 - **Suggestion**: Recommend appropriate metric type (counter for events, gauge for state, histogram for durations)
 - **Validation**: Check for error tracking metrics in error handling code
@@ -270,6 +271,7 @@ impl ApiService {
 ```
 
 **Why incorrect patterns fail:**
+
 - No metrics prevent monitoring request rates, error rates, and system health
 - Missing duration histograms hide performance degradation and bottlenecks
 - No error tracking metrics obscure failure patterns and impact

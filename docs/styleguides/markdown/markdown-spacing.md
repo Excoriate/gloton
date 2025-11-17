@@ -79,6 +79,7 @@ Another paragraph after code block.
 - List item 2
 
 Content after list.
+
 ```
 
 ### ❌ Incorrect Spacing
@@ -95,11 +96,13 @@ Multiple blank lines above (PROHIBITED)
 ```bash
 echo "No blank line before"
 ```
+
 Content immediately after code block
 
 - List with no blank line before
 - List item
 Content immediately after list (NO BLANK LINE)
+
 ```
 
 ### Code Blocks in Lists (Special Case)
@@ -115,11 +118,15 @@ Content immediately after list (NO BLANK LINE)
 - Next list item
 
 ❌ INCORRECT:
+
 - List item
+
 ```bash
 echo "Code block not indented"
 ```
+
 - Next list item
+
 ```
 
 ## Related Rules

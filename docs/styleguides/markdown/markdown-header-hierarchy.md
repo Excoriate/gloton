@@ -102,14 +102,17 @@ Section Title
 **Prerequisites**: None (foundational formatting rule)
 
 **Input Assumptions**:
+
 - Markdown file exists
 - Contains headers
 
 **Output Guarantees**:
+
 - All headers use hash symbol syntax
 - Headers follow semantic hierarchy
 - No skipped levels in header structure
 - Proper spacing after hash symbols
 
 **Next Steps**:
+
 - [markdown-spacing.md](./markdown-spacing.md) - Apply spacing standards around headers

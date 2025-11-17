@@ -57,3 +57,21 @@ ci: fmt-check clippy test build
 # Development workflow: format, check, run
 dev: fmt check
     cargo run -- hello
+
+# Install pre-commit hooks
+pre-commit-install:
+    pre-commit install
+    @echo "✅ Pre-commit hooks installed!"
+
+# Run pre-commit hooks on all files
+pre-commit-run:
+    pre-commit run --all-files
+
+# Update pre-commit hooks to latest versions
+pre-commit-update:
+    pre-commit autoupdate
+
+# Uninstall pre-commit hooks
+pre-commit-uninstall:
+    pre-commit uninstall
+    @echo "✅ Pre-commit hooks uninstalled!"

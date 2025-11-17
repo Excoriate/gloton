@@ -63,6 +63,7 @@ Enforce tracing span instrumentation using `#[instrument]` macro and manual span
 ## Implementation
 
 Cursor IDE enforcement:
+
 - **Detection**: Identify public functions without `#[instrument]` macro
 - **Suggestion**: Recommend `#[instrument]` with appropriate level and skip parameters
 - **Validation**: Check for manual span creation in complex operations (loops, branching logic)
@@ -262,6 +263,7 @@ pub async fn orchestrate_workflow(workflow_id: &str) -> Result<(), Error> {
 ```
 
 **Why incorrect patterns fail:**
+
 - Missing `#[instrument]` on public functions loses execution context in distributed traces
 - No manual spans for sub-operations creates flat, uninformative trace hierarchies
 - Events without spans are orphaned (can't be correlated with requests/operations)

@@ -69,6 +69,7 @@ This rule enforces best practices for performance optimization in Rust code.
 ## Examples
 
 ### Good
+
 ```rust
 // Efficient iterator usage
 let sum: i32 = numbers
@@ -105,6 +106,7 @@ impl EfficientBuffer {
 ```
 
 ### Bad
+
 ```rust
 // Inefficient memory usage
 let mut vec = Vec::new();
@@ -129,6 +131,7 @@ fn process_dynamic(input: &dyn AsRef<str>) {
 ## Implementation
 
 Cursor IDE and profiling tools should enforce these practices through:
+
 - Detection of unnecessary heap allocations in hot paths
 - Analysis of iterator chain efficiency
 - Validation of appropriate collection type usage
@@ -138,6 +141,7 @@ Cursor IDE and profiling tools should enforce these practices through:
 ## Benefits
 
 Performance optimization practices ensure:
+
 - **Efficient resource utilization**: Stack allocation and buffer reuse minimize memory pressure
 - **Minimal runtime overhead**: Zero-cost abstractions and compile-time optimizations eliminate unnecessary work
 - **Scalable applications**: Iterator combinators and efficient data structures enable high throughput
@@ -148,4 +152,4 @@ Performance optimization practices ensure:
 
 - [Rust Performance Book](https://nnethercote.github.io/perf-book)
 - [Criterion Documentation](https://docs.rs/criterion/latest/criterion)
-- [Rust Iterator Documentation](https://doc.rust-lang.org/std/iter/trait.Iterator.html) 
+- [Rust Iterator Documentation](https://doc.rust-lang.org/std/iter/trait.Iterator.html)

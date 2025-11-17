@@ -36,6 +36,7 @@ Compiler optimization techniques in Rust leverage the type system and LLVM backe
 **MANDATORY**: Always configure release profiles for production builds with aggressive optimizations.
 
 **Recommended Release Profile:**
+
 ```toml
 # Cargo.toml
 [profile.release]
@@ -47,6 +48,7 @@ panic = "abort"        # Abort on panic (no unwinding overhead)
 ```
 
 **Opt-Level Tradeoffs:**
+
 - `opt-level = 0`: No optimization (debug builds)
 - `opt-level = 1`: Basic optimizations (faster compile)
 - `opt-level = 2`: Recommended optimizations (balanced)
@@ -61,6 +63,7 @@ panic = "abort"        # Abort on panic (no unwinding overhead)
 **MANDATORY**: Use LTO for binaries where runtime performance is critical (skip for libraries).
 
 **LTO Modes:**
+
 ```toml
 [profile.release]
 lto = false      # No LTO (default) - fastest compile
@@ -69,6 +72,7 @@ lto = "fat"      # Fat LTO - full cross-crate optimization (slowest compile, bes
 ```
 
 **When to Use LTO:**
+
 - ✅ Performance-critical binaries (servers, CLI tools, games)
 - ✅ Release builds for production deployment
 - ❌ Libraries (users control LTO via their Cargo.toml)
@@ -83,6 +87,7 @@ lto = "fat"      # Fat LTO - full cross-crate optimization (slowest compile, bes
 **MANDATORY**: Apply `#[inline]` to hot path functions (identified via profiling) that are called frequently across crate boundaries.
 
 **Inlining Strategy:**
+
 ```rust
 // #[inline]: Suggest inlining (compiler decides)
 #[inline]
@@ -104,6 +109,7 @@ pub fn complex_cold_function(data: &[u8]) -> Vec<u8> {
 ```
 
 **Inlining Guidelines:**
+
 - **Small functions (<10 lines)**: Use `#[inline]` if called frequently
 - **Critical hot paths**: Use `#[inline(always)]` after profiling confirms benefit
 - **Large functions (>50 lines)**: Avoid inlining (code bloat)
@@ -116,6 +122,7 @@ pub fn complex_cold_function(data: &[u8]) -> Vec<u8> {
 **MANDATORY**: Use SIMD (Single Instruction Multiple Data) for data-parallel operations on large arrays/slices.
 
 **Portable SIMD (Stable Rust):**
+
 ```rust
 // Enable portable_simd feature
 #![feature(portable_simd)]
@@ -138,6 +145,7 @@ pub fn sum_f32_simd(values: &[f32]) -> f32 {
 ```
 
 **Auto-Vectorization (Compiler SIMD):**
+
 ```rust
 // Compiler auto-vectorizes simple loops
 pub fn multiply_slices(a: &[f32], b: &[f32], out: &mut [f32]) {
@@ -148,6 +156,7 @@ pub fn multiply_slices(a: &[f32], b: &[f32], out: &mut [f32]) {
 ```
 
 **When to Use Explicit SIMD:**
+
 - Data-parallel operations (element-wise math, filters, reductions)
 - Large arrays/slices (>1000 elements)
 - Hot paths identified via profiling
@@ -160,6 +169,7 @@ pub fn multiply_slices(a: &[f32], b: &[f32], out: &mut [f32]) {
 **MANDATORY**: Move runtime computations to compile-time using `const fn` and `const` generics.
 
 **Const Functions:**
+
 ```rust
 // Compile-time computation
 const fn factorial(n: u32) -> u32 {
@@ -189,6 +199,7 @@ impl<const N: usize> FixedBuffer<N> {
 ```
 
 **Const Evaluation Opportunities:**
+
 - Configuration constants (buffer sizes, magic numbers)
 - Lookup table generation
 - Compile-time validation (array sizes, protocol magic numbers)
@@ -201,6 +212,7 @@ impl<const N: usize> FixedBuffer<N> {
 **MANDATORY**: Use generics (static dispatch) for hot paths instead of trait objects (dynamic dispatch).
 
 **Zero-Cost Abstraction Pattern:**
+
 ```rust
 // ✅ CORRECT: Generic (static dispatch, monomorphized, inlined)
 pub fn process<T: Processor>(items: &[Data], processor: &T) {
@@ -218,6 +230,7 @@ pub fn process_dynamic(items: &[Data], processor: &dyn Processor) {
 ```
 
 **When Trait Objects Are Acceptable:**
+
 - Heterogeneous collections (different types in same Vec)
 - Plugin systems (dynamic loading)
 - Cold paths (<5% profiling time)
@@ -229,6 +242,7 @@ pub fn process_dynamic(items: &[Data], processor: &dyn Processor) {
 **MANDATORY**: Apply PGO for production binaries to enable data-driven compiler optimizations.
 
 **PGO Workflow:**
+
 ```bash
 # Step 1: Build instrumented binary
 RUSTFLAGS="-Cprofile-generate=/tmp/pgo-data" cargo build --release
@@ -241,6 +255,7 @@ RUSTFLAGS="-Cprofile-use=/tmp/pgo-data/merged.profdata" cargo build --release
 ```
 
 **PGO Benefits:**
+
 - Inlining decisions based on actual call frequency
 - Branch prediction hints from real workload patterns
 - Code layout optimization for instruction cache locality
@@ -265,6 +280,7 @@ static GLOBAL: MiMalloc = MiMalloc;
 ```bash
 RUSTFLAGS="-C target-cpu=native" cargo build --release
 ```
+
 **Note**: This produces a binary that may not run on older CPUs.
 
 ---
@@ -274,26 +290,31 @@ RUSTFLAGS="-C target-cpu=native" cargo build --release
 Cursor IDE and build tools should enforce these practices through:
 
 **Cargo.toml Validation:**
+
 - Detect missing `[profile.release]` section in workspace roots
 - Flag binaries without LTO configuration for performance-critical projects
 - Verify `opt-level = 3` for production releases
 
 **Inlining Analysis:**
+
 - Parse profiling data (cargo flamegraph, perf) to identify hot path functions
 - Cross-reference hot paths with function definitions lacking `#[inline]`
 - Suggest `#[inline]` for small (<10 LOC), frequently called functions
 
 **SIMD Opportunity Detection:**
+
 - Identify data-parallel loops (element-wise operations on slices)
 - Check for explicit SIMD usage or auto-vectorization hints
 - Flag hot path loops without SIMD optimization
 
 **Const Evaluation:**
+
 - Detect runtime computation of compile-time constants
 - Suggest `const fn` for pure functions computing constants
 - Identify opportunities for `const` generics (array sizes, buffer capacities)
 
 **Zero-Cost Abstraction Enforcement:**
+
 - Parse profiling call graphs for dynamic dispatch (`<dyn Trait>`) in hot paths
 - Suggest generic alternatives for trait objects in performance-critical code
 - Validate generic functions are properly monomorphized

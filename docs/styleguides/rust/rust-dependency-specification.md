@@ -30,6 +30,7 @@ This rule unifies **dependency declaration syntax** concerns in Cargo.toml:
 These aspects are tightly coupled because they all define **HOW dependencies are declared** in Cargo.toml manifests. Version constraints determine which package versions are acceptable, features control which functionality is enabled, attributes modify dependency compilation behavior, and dependency types segregate dependencies based on their role in the build process. Together, they form the complete specification syntax for declaring external dependencies in Rust projects.
 
 **Separation Rationale:**
+
 - **Dependency Management** (separate rule) handles runtime concerns: resolution, locking, updates, audits.
 - **Workspace Dependencies** (separate rule) handles multi-crate organization: workspace inheritance, path dependencies.
 
@@ -38,6 +39,7 @@ These aspects are tightly coupled because they all define **HOW dependencies are
 Proper dependency specification in Cargo.toml ensures reproducible builds, security through version control, and explicit feature management. This rule enforces best practices for dependency syntax, version constraints, feature flag configuration, and the correct use of dependency sections (`[dependencies]`, `[dev-dependencies]`, `[build-dependencies]`).
 
 **Core Requirements:**
+
 - Use specific semantic version constraints (avoid wildcards `*` and open-ended `>=`).
 - Explicitly declare required features for dependencies.
 - Use `[dev-dependencies]` for testing, examples, and benchmarking.
@@ -45,6 +47,7 @@ Proper dependency specification in Cargo.toml ensures reproducible builds, secur
 - Use `default-features = false` when only specific features are needed.
 
 **Rationale:**
+
 - **Reproducibility**: Caret (`^`) and tilde (`~`) version constraints prevent unexpected breakage while allowing compatible updates.
 - **Security**: Specific version ranges allow security patches while preventing breaking changes.
 - **Build Optimization**: Separating dependency types reduces compilation time and final binary size.
@@ -155,11 +158,13 @@ my-local-crate = { path = "../my-local-crate" }
 ## Implementation
 
 **Cursor IDE Integration:**
+
 - Validate `Cargo.toml` syntax and version constraints.
 - Suggest moving dependencies to `[dev-dependencies]` or `[build-dependencies]` where appropriate.
 - Warn about wildcard (`*`) or open-ended (`>=`) version specifications.
 
 **Cargo Tooling:**
+
 - `cargo check`: Validates `Cargo.toml` syntax.
 - `cargo tree`: Visualizes the dependency graph, helping to identify where dependencies are used.
 

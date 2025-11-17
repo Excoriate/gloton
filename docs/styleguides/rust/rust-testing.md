@@ -22,9 +22,9 @@ alwaysApply: true
 
 A robust testing strategy in Rust relies on a cohesive combination of different test types and organizational patterns:
 
-1.  **Unit Tests**: Small, focused tests that verify the functionality of individual components, often including private implementation details.
-2.  **Integration Tests**: Larger tests that exercise the public API of a crate, ensuring that different parts of the library work together correctly.
-3.  **Documentation Tests**: Examples in the documentation that are compiled and run as tests, ensuring that the documentation is always up-to-date and correct.
+1. **Unit Tests**: Small, focused tests that verify the functionality of individual components, often including private implementation details.
+2. **Integration Tests**: Larger tests that exercise the public API of a crate, ensuring that different parts of the library work together correctly.
+3. **Documentation Tests**: Examples in the documentation that are compiled and run as tests, ensuring that the documentation is always up-to-date and correct.
 
 These test types are complementary. Unit tests provide granular feedback, integration tests ensure the public API is sound, and doc tests guarantee that the examples users will see are correct. `cargo test` is the unifying tool that runs all of these tests together, providing a comprehensive view of the crate's correctness.
 
@@ -38,7 +38,7 @@ This rule enforces best practices for writing automated tests in Rust. A strong 
 
 **MANDATORY**: Organize your tests into unit and integration tests according to Rust's conventions.
 
--   **Unit Tests**: Place unit tests in a `tests` module inside the same file as the code they are testing, annotated with `#[cfg(test)]`. This allows them to access private functions and structs.
+- **Unit Tests**: Place unit tests in a `tests` module inside the same file as the code they are testing, annotated with `#[cfg(test)]`. This allows them to access private functions and structs.
 
     ```rust
     // src/my_module.rs
@@ -57,7 +57,7 @@ This rule enforces best practices for writing automated tests in Rust. A strong 
     }
     ```
 
--   **Integration Tests**: Place integration tests in a `tests` directory at the root of your crate. Each file in this directory is compiled as a separate crate and can only test the public API of your library.
+- **Integration Tests**: Place integration tests in a `tests` directory at the root of your crate. Each file in this directory is compiled as a separate crate and can only test the public API of your library.
 
     ```
     // tests/integration_test.rs
@@ -73,17 +73,17 @@ This rule enforces best practices for writing automated tests in Rust. A strong 
 
 **MANDATORY**: Write clear, focused tests that follow the Arrange-Act-Assert pattern and use the appropriate assertion macros.
 
--   **AAA Pattern**:
-    1.  **Arrange**: Set up any necessary data or state.
-    2.  **Act**: Call the function or method you want to test.
-    3.  **Assert**: Check that the result is what you expect.
+- **AAA Pattern**:
+    1. **Arrange**: Set up any necessary data or state.
+    2. **Act**: Call the function or method you want to test.
+    3. **Assert**: Check that the result is what you expect.
 
--   **Assertion Macros**:
-    -   `assert!(expression)`: Panics if `expression` is `false`.
-    -   `assert_eq!(left, right)`: Panics if `left != right`.
-    -   `assert_ne!(left, right)`: Panics if `left == right`.
+- **Assertion Macros**:
+  - `assert!(expression)`: Panics if `expression` is `false`.
+  - `assert_eq!(left, right)`: Panics if `left != right`.
+  - `assert_ne!(left, right)`: Panics if `left == right`.
 
--   **Testing for Panics**: Use `#[should_panic]` to verify that a function panics when it should.
+- **Testing for Panics**: Use `#[should_panic]` to verify that a function panics when it should.
 
     ```rust
     #[test]
@@ -94,7 +94,7 @@ This rule enforces best practices for writing automated tests in Rust. A strong 
     }
     ```
 
--   **Using `Result` in Tests**: Tests can return a `Result<T, E>`, which allows you to use the `?` operator. The test will fail if it returns an `Err`.
+- **Using `Result` in Tests**: Tests can return a `Result<T, E>`, which allows you to use the `?` operator. The test will fail if it returns an `Err`.
 
     ```rust
     #[test]
@@ -111,12 +111,12 @@ This rule enforces best practices for writing automated tests in Rust. A strong 
 
 **MANDATORY**: Know how to run specific tests to speed up your development workflow.
 
--   **Run all tests**: `cargo test`
--   **Run a single test**: `cargo test test_name`
--   **Run tests in a module**: `cargo test module_name::`
--   **Run ignored tests**: `cargo test -- --ignored`
--   **Show output from passing tests**: `cargo test -- --show-output`
--   **Run tests in a single thread**: `cargo test -- --test-threads=1`
+- **Run all tests**: `cargo test`
+- **Run a single test**: `cargo test test_name`
+- **Run tests in a module**: `cargo test module_name::`
+- **Run ignored tests**: `cargo test -- --ignored`
+- **Show output from passing tests**: `cargo test -- --show-output`
+- **Run tests in a single thread**: `cargo test -- --test-threads=1`
 
 ### 4. Async Testing
 
@@ -140,20 +140,20 @@ mod tests {
 
 ## Implementation
 
--   **`cargo test`**: The primary tool for running all types of tests.
--   **Clippy Lints**:
-    -   `clippy::cognitive_complexity`: Can help identify functions that are too complex and may be difficult to test.
--   **Code Coverage Tools**: Use tools like `cargo-tarpaulin` or `grcov` to measure test coverage.
+- **`cargo test`**: The primary tool for running all types of tests.
+- **Clippy Lints**:
+  - `clippy::cognitive_complexity`: Can help identify functions that are too complex and may be difficult to test.
+- **Code Coverage Tools**: Use tools like `cargo-tarpaulin` or `grcov` to measure test coverage.
 
 ## Benefits
 
--   **Correctness**: A comprehensive test suite helps ensure that your code behaves as expected.
--   **Regression Prevention**: Tests catch unintended side effects of code changes.
--   **Confident Refactoring**: A good test suite allows you to refactor your code with confidence.
--   **Executable Documentation**: Tests serve as examples of how to use your API.
+- **Correctness**: A comprehensive test suite helps ensure that your code behaves as expected.
+- **Regression Prevention**: Tests catch unintended side effects of code changes.
+- **Confident Refactoring**: A good test suite allows you to refactor your code with confidence.
+- **Executable Documentation**: Tests serve as examples of how to use your API.
 
 ## References
 
--   [The Rust Book: How to Write Tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html)
--   [The Rust Book: Test Organization](https://doc.rust-lang.org/book/ch11-03-test-organization.html)
--   [Async Testing with Tokio](https://tokio.rs/tokio/tutorial/testing)
+- [The Rust Book: How to Write Tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html)
+- [The Rust Book: Test Organization](https://doc.rust-lang.org/book/ch11-03-test-organization.html)
+- [Async Testing with Tokio](https://tokio.rs/tokio/tutorial/testing)

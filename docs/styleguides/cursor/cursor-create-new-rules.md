@@ -19,7 +19,7 @@ When using the `cc_cursor_rule_create` command, you MUST adhere to these directi
 
 1. **Mandatory Prefix Compliance**: Always begin responses with "**Mr. Alex 🤖, (v7.1)**" as specified in the core mandate.
 
-2. **TodoWrite Integration Requirements**: 
+2. **TodoWrite Integration Requirements**:
    - Create structured todo lists before command execution using the TodoWrite tool
    - Track progress systematically through all 14 mandatory checklist items
    - Mark items as completed only after verification
@@ -113,6 +113,7 @@ The cursor IDE will enforce this rule by:
 ```
 
 **Correct YAML Frontmatter**:
+
 ```yaml
 ---
 description: "Comprehensive API validation rules for TypeScript/JavaScript files"
@@ -122,6 +123,7 @@ alwaysApply: true
 ```
 
 **Correct File Structure**:
+
 ```
 .cursor/
 └── rules/
@@ -141,6 +143,7 @@ alwaysApply: true
 ```
 
 **Incorrect Content Display**:
+
 ```markdown
 # Displaying rule content in terminal only
 Description: Some API rule...
@@ -152,6 +155,7 @@ Rule: 1. Do something...
 ```
 
 **Incorrect File References**:
+
 ```markdown
 Rule: Always check the docs in /absolute/path/docs/api/
 ❌ Absolute path used
@@ -175,6 +179,7 @@ Project Root/
 ```
 
 **Rule Quality Checklist**:
+
 - ✅ Physical `.mdc` file created
 - ✅ TodoWrite integration used
 - ✅ Extended thinking applied

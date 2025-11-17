@@ -22,10 +22,10 @@ alwaysApply: true
 
 Building a command-line interface (CLI) with `clap` involves a cohesive set of practices that together create a robust and user-friendly application. This includes:
 
-1.  **Command and Argument Structure**: Defining the CLI's commands, subcommands, and arguments, which forms the core of the user interface.
-2.  **Parsing and Validation**: `clap` handles the parsing of command-line input and validates it against the defined structure, ensuring that the application receives correct and expected input.
-3.  **User Experience (UX)**: Automatically generating help messages, version information, and error messages, which are integral to a good user experience.
-4.  **Derive vs. Builder API**: While `clap` offers two APIs, the derive API is the modern, idiomatic choice for its conciseness and ease of use.
+1. **Command and Argument Structure**: Defining the CLI's commands, subcommands, and arguments, which forms the core of the user interface.
+2. **Parsing and Validation**: `clap` handles the parsing of command-line input and validates it against the defined structure, ensuring that the application receives correct and expected input.
+3. **User Experience (UX)**: Automatically generating help messages, version information, and error messages, which are integral to a good user experience.
+4. **Derive vs. Builder API**: While `clap` offers two APIs, the derive API is the modern, idiomatic choice for its conciseness and ease of use.
 
 These components are interdependent; a well-structured CLI is of little use without proper parsing and validation, and a good user experience is built upon a clear command structure and helpful feedback.
 
@@ -137,6 +137,7 @@ enum LogLevel {
 ## Implementation
 
 Cursor IDE and linters like `clippy` can enforce these practices by:
+
 - **Detecting Manual Parsing**: Flagging manual parsing of `std::env::args()` and suggesting the use of `clap`.
 - **Validating Derive Macros**: Ensuring that structs used for parsing have the `#[derive(Parser)]` attribute.
 - **Checking for Documentation**: Warning about missing doc comments on public commands and arguments.

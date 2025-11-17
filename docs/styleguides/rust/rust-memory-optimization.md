@@ -38,6 +38,7 @@ Memory optimization in Rust targets three performance dimensions: allocation ove
 **MANDATORY**: Use stack allocation (arrays, fixed-size structs) for data with known, bounded size. Reserve heap allocation (Vec, Box, String) for dynamically-sized data.
 
 **Stack vs Heap Tradeoffs:**
+
 ```rust
 // ✅ STACK: Known size, short lifetime, frequently accessed
 fn process_small_buffer(input: &[u8]) -> [u8; 64] {
@@ -226,27 +227,27 @@ fn process_data(data: Cow<str>) -> Cow<str> {
 
 **MANDATORY**: Use tools to measure memory usage and validate optimizations.
 
--   **Measure Type Sizes**: Use `std::mem::size_of::<T>()` and the nightly `RUSTFLAGS="-Zprint-type-sizes"` flag to inspect type layouts.
--   **Profile Heap Allocations**: Use tools like `dhat` or `valgrind --tool=massif` to identify allocation hotspots.
--   **Static Assertions**: Use `static_assertions::assert_eq_size!` to prevent unintentional type size regressions.
+- **Measure Type Sizes**: Use `std::mem::size_of::<T>()` and the nightly `RUSTFLAGS="-Zprint-type-sizes"` flag to inspect type layouts.
+- **Profile Heap Allocations**: Use tools like `dhat` or `valgrind --tool=massif` to identify allocation hotspots.
+- **Static Assertions**: Use `static_assertions::assert_eq_size!` to prevent unintentional type size regressions.
 
 ## Implementation
 
--   **Profiling**: Integrate heap profiling tools into your development workflow.
--   **Linting**: Use Clippy lints like `clippy::large_enum_variant` and `clippy::vec_init_then_push`.
--   **Code Review**: Manually inspect hot paths for unnecessary allocations and suboptimal data structures.
+- **Profiling**: Integrate heap profiling tools into your development workflow.
+- **Linting**: Use Clippy lints like `clippy::large_enum_variant` and `clippy::vec_init_then_push`.
+- **Code Review**: Manually inspect hot paths for unnecessary allocations and suboptimal data structures.
 
 ## Benefits
 
--   **Reduced Allocation Overhead**: Faster execution by avoiding costly heap allocations.
--   **Improved Cache Performance**: Better data locality and layout lead to higher cache hit rates.
--   **Lower Memory Footprint**: Smaller data structures and less fragmentation reduce overall memory usage.
--   **Predictable Performance**: Eliminates unpredictable pauses from reallocations.
+- **Reduced Allocation Overhead**: Faster execution by avoiding costly heap allocations.
+- **Improved Cache Performance**: Better data locality and layout lead to higher cache hit rates.
+- **Lower Memory Footprint**: Smaller data structures and less fragmentation reduce overall memory usage.
+- **Predictable Performance**: Eliminates unpredictable pauses from reallocations.
 
 ## References
 
--   [The Rust Performance Book](https://nnethercote.github.io/perf-book/)
--   [Rustonomicon: Data Layout](https://doc.rust-lang.org/nomicon/data.html)
--   [`dhat-rs` for heap profiling](https://crates.io/crates/dhat)
--   [`smallvec` crate](https://crates.io/crates/smallvec)
--   [`smartstring` crate](https://crates.io/crates/smartstring)
+- [The Rust Performance Book](https://nnethercote.github.io/perf-book/)
+- [Rustonomicon: Data Layout](https://doc.rust-lang.org/nomicon/data.html)
+- [`dhat-rs` for heap profiling](https://crates.io/crates/dhat)
+- [`smallvec` crate](https://crates.io/crates/smallvec)
+- [`smartstring` crate](https://crates.io/crates/smartstring)

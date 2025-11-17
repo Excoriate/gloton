@@ -149,7 +149,7 @@ pub enum Commands {
 }
 ```
 
-2. **Handle command in `src/main.rs`:**
+1. **Handle command in `src/main.rs`:**
 
 ```rust
 match cli.command {
@@ -162,7 +162,7 @@ match cli.command {
 }
 ```
 
-3. **Test it:**
+1. **Test it:**
 
 ```bash
 just dev
@@ -219,6 +219,7 @@ just ci
 ```
 
 Which runs:
+
 - ✅ `cargo fmt --check` - Code formatting
 - ✅ `cargo clippy -- -D warnings` - Linting (zero warnings allowed)
 - ✅ `cargo test` - All tests

@@ -22,15 +22,16 @@ alwaysApply: true
 
 This rule unifies **multi-crate dependency coordination** concerns in Rust workspaces:
 
-1.  **Workspace Structure** - Organizing multiple related crates under a single workspace root.
-2.  **Workspace Dependency Inheritance** - Sharing dependency versions and metadata across workspace members.
-3.  **Path Dependencies** - Referencing local crates within the workspace.
-4.  **Shared Build Configuration** - Coordinating profiles, features, and build settings.
-5.  **Resolver Version** - Defining the dependency resolution algorithm for the workspace.
+1. **Workspace Structure** - Organizing multiple related crates under a single workspace root.
+2. **Workspace Dependency Inheritance** - Sharing dependency versions and metadata across workspace members.
+3. **Path Dependencies** - Referencing local crates within the workspace.
+4. **Shared Build Configuration** - Coordinating profiles, features, and build settings.
+5. **Resolver Version** - Defining the dependency resolution algorithm for the workspace.
 
 These aspects are tightly coupled because they all govern **HOW dependencies are coordinated across multiple crates in a workspace**. Workspace structure defines the organizational hierarchy, inheritance ensures version consistency, path dependencies enable inter-crate references, shared configuration reduces duplication, and the resolver version ensures a consistent dependency resolution strategy. Together, they form the complete multi-crate dependency coordination strategy.
 
 **Separation Rationale:**
+
 - **Dependency Specification** (separate rule) handles single-crate concerns: version syntax, features, attributes.
 - **Dependency Management** (separate rule) handles runtime concerns: resolution, locking, updates, audits.
 
@@ -115,6 +116,7 @@ panic = "abort"
 ## Implementation
 
 **Cargo Workspace Commands:**
+
 - `cargo build --workspace`: Build all members.
 - `cargo test --workspace`: Test all members.
 - `cargo run --bin <binary_name>`: Run a specific binary crate.
@@ -122,10 +124,10 @@ panic = "abort"
 
 ## Benefits
 
-1.  **Version Consistency**: All crates in the workspace use the same dependency versions.
-2.  **Build Efficiency**: Shared dependencies are compiled only once.
-3.  **Reduced Duplication**: Centralized dependency and metadata management.
-4.  **Logical Organization**: Keeps related crates grouped together.
+1. **Version Consistency**: All crates in the workspace use the same dependency versions.
+2. **Build Efficiency**: Shared dependencies are compiled only once.
+3. **Reduced Duplication**: Centralized dependency and metadata management.
+4. **Logical Organization**: Keeps related crates grouped together.
 
 ## Examples
 

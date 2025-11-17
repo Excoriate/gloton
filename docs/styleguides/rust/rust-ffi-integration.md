@@ -24,6 +24,7 @@ alwaysApply: true
 This rule enforces comprehensive FFI integration practices including proper C ABI declarations, memory-safe extern function bindings, automated binding generation with bindgen/cbindgen, and cross-language contract validation.
 
 **Scope:**
+
 - C FFI function declarations and calling conventions
 - `#[repr(C)]` type layout and ABI compatibility
 - bindgen integration (C → Rust binding generation)
@@ -38,17 +39,20 @@ This rule enforces comprehensive FFI integration practices including proper C AB
 ### 1. Extern Declaration Best Practices
 
 **Function Declaration:**
+
 - Use `extern "C"` for C ABI functions
 - Add `#[no_mangle]` for functions callable from C
 - Document platform-specific calling conventions (e.g., `extern "system"` on Windows)
 - Declare functions as `unsafe` unless fully validated internally
 
 **Type Safety:**
+
 - Use `std::os::raw::c_*` types for C primitive types
 - Never pass Rust-specific types (String, Vec, Box) directly
 - Convert to/from C-compatible representations at boundary
 
 **Error Handling:**
+
 - Return error codes or sentinel values (not Result)
 - Document error code meanings in comments
 - Use out-parameters for returning complex data
@@ -56,12 +60,14 @@ This rule enforces comprehensive FFI integration practices including proper C AB
 ### 2. Memory Layout Compatibility
 
 **`#[repr(C)]` Requirements:**
+
 - Use `#[repr(C)]` for all structs passed to C
 - Use `#[repr(transparent)]` for single-field wrappers
 - Validate struct size with compile-time assertions
 - Document alignment requirements
 
 **Layout Validation:**
+
 ```rust
 #[repr(C)]
 pub struct CStruct { /* ... */ }
@@ -73,6 +79,7 @@ const _: () = {
 ```
 
 **Enum Representation:**
+
 - Use `#[repr(C)]` or `#[repr(i32)]` for enums passed to C
 - Document discriminant values
 - Verify exhaustiveness when converting from C integers
@@ -80,6 +87,7 @@ const _: () = {
 ### 3. bindgen Integration
 
 **Bindgen Configuration (build.rs):**
+
 ```rust
 bindgen::Builder::default()
     .header("wrapper.h")
@@ -92,6 +100,7 @@ bindgen::Builder::default()
 ```
 
 **Best Practices:**
+
 - Whitelist only needed functions/types with `allowlist_*`
 - Use `blocklist_*` to exclude problematic definitions
 - Enable `derive_default()` for C structs when safe
@@ -99,6 +108,7 @@ bindgen::Builder::default()
 - Use `impl_debug()` for better ergonomics
 
 **Safety Wrappers:**
+
 - Wrap generated bindings in safe Rust APIs
 - Validate all pointer arguments before passing to C
 - Convert C error codes to `Result<T, E>`
@@ -106,6 +116,7 @@ bindgen::Builder::default()
 ### 4. cbindgen Integration
 
 **Cbindgen Configuration (cbindgen.toml):**
+
 ```toml
 language = "C"
 include_guard = "MY_LIB_H"
@@ -121,12 +132,14 @@ rename_variants = "ScreamingSnakeCase"
 ```
 
 **Best Practices:**
+
 - Add `#[no_mangle]` and `extern "C"` to exported functions
 - Use consistent prefix for C function names
 - Document all exported functions with `///` comments
 - Generate headers in build.rs for consistency
 
 **Header Generation:**
+
 ```rust
 // build.rs
 cbindgen::generate(env!("CARGO_MANIFEST_DIR"))
@@ -137,16 +150,19 @@ cbindgen::generate(env!("CARGO_MANIFEST_DIR"))
 ### 5. Cross-Language Contract Validation
 
 **Ownership Semantics:**
+
 - Document ownership transfer with `/// Takes ownership` or `/// Borrows`
 - Use `Box::into_raw()` / `Box::from_raw()` for ownership transfer
 - Never transfer ownership of borrowed references
 
 **Lifetime Management:**
+
 - Use opaque pointers for complex Rust types
 - Provide explicit `_destroy` functions for cleanup
 - Document lifetime requirements in comments
 
 **Thread Safety:**
+
 - Document thread-safety guarantees for FFI functions
 - Use `Send` marker for types passing between threads
 - Avoid global mutable state unless synchronized
@@ -155,8 +171,8 @@ cbindgen::generate(env!("CARGO_MANIFEST_DIR"))
 
 **Be mindful of panics across FFI boundaries.** By default, if a panic occurs in Rust code called from C, it will unwind the stack, which is undefined behavior in C.
 
--   **Use `catch_unwind`**: Wrap the Rust code called from C in `std::panic::catch_unwind` to catch any panics and convert them into an error code.
--   **Use `-unwind` ABIs**: For cases where unwinding must cross the FFI boundary (e.g., when interfacing with C++ code that uses exceptions), use an ABI with the `-unwind` suffix, like `"C-unwind"`. This is an advanced feature and should be used with caution.
+- **Use `catch_unwind`**: Wrap the Rust code called from C in `std::panic::catch_unwind` to catch any panics and convert them into an error code.
+- **Use `-unwind` ABIs**: For cases where unwinding must cross the FFI boundary (e.g., when interfacing with C++ code that uses exceptions), use an ABI with the `-unwind` suffix, like `"C-unwind"`. This is an advanced feature and should be used with caution.
 
 ```rust
 use std::panic;
@@ -179,17 +195,20 @@ pub extern "C" fn my_rust_api() -> i32 {
 Cursor IDE should enforce these practices through:
 
 **Static Analysis:**
+
 - Detect extern functions without proper type conversions
 - Flag Rust-specific types crossing FFI boundaries
 - Warn on missing `#[repr(C)]` for FFI structs
 - Identify unsafe FFI without validation
 
 **Build Integration:**
+
 - Validate bindgen/cbindgen in build.rs
 - Check generated headers for consistency
 - Run layout tests on CI
 
 **Linting (clippy):**
+
 - `clippy::missing_safety_doc` for unsafe FFI functions
 - `clippy::not_unsafe_ptr_arg_deref` for pointer validation
 - Custom lint: Detect Rust types in extern signatures

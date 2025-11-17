@@ -12,6 +12,7 @@ alwaysApply: true
 This rule enforces consistent directory naming conventions across the entire repository. Directories MUST use underscores (`_`) as word separators, maintaining lowercase ASCII-only characters. This creates a clear visual distinction from file naming patterns and ensures universal compatibility.
 
 **Primary Focus Areas:**
+
 - Underscore word separators (`_`) for directories
 - Lowercase-only enforcement
 - ASCII character compatibility
@@ -23,7 +24,7 @@ This rule enforces consistent directory naming conventions across the entire rep
 
 1. **Word Separator Pattern**
    - MUST use underscores (`_`) as word separators
-   - PROHIBITED: Dashes (`-`), spaces (` `), or camelCase
+   - PROHIBITED: Dashes (`-`), spaces (``), or camelCase
    - Examples: `cursor_rules`, `github_workflows`, `test_fixtures`
 
 2. **Case Enforcement**
@@ -51,6 +52,7 @@ This rule enforces consistent directory naming conventions across the entire rep
 - Suggested corrections for violations
 
 **Validation Triggers:**
+
 - New directory creation anywhere in repository
 - Directory renaming operations
 - Repository structure scanning
@@ -92,6 +94,7 @@ stdlib/
 ### Common Violations and Fixes
 
 **Dash Usage (Wrong Separator):**
+
 ```text
 ❌ cursor-rules/           →  ✅ cursor_rules/
 ❌ github-workflows/       →  ✅ github_workflows/
@@ -100,6 +103,7 @@ stdlib/
 ```
 
 **CamelCase Violations:**
+
 ```text
 ❌ testFixtures/           →  ✅ test_fixtures/
 ❌ apiDocumentation/       →  ✅ api_documentation/
@@ -108,6 +112,7 @@ stdlib/
 ```
 
 **Space and Capitalization:**
+
 ```text
 ❌ API Docs/               →  ✅ api_docs/
 ❌ Test Fixtures/          →  ✅ test_fixtures/
@@ -118,6 +123,7 @@ stdlib/
 ### Validation Commands
 
 **Find Non-Compliant Directories:**
+
 ```bash
 # Find directories with dashes
 find . -type d -name "*-*" | grep -v ".git"
@@ -130,6 +136,7 @@ find . -type d -name "* *"
 ```
 
 **Batch Rename Non-Compliant Directories:**
+
 ```bash
 # Convert dashes to underscores
 for dir in $(find . -type d -name "*-*" | grep -v ".git"); do
@@ -154,13 +161,16 @@ done
 **Prerequisites**: None (foundational naming rule)
 
 **Input Assumptions:**
+
 - Repository structure exists
 - User creating or renaming directories
 
 **Output Guarantees:**
+
 - All directories follow underscore pattern
 - All directories are lowercase
 - All directories are ASCII-compatible
 
 **Next Steps**:
+
 - [markdown-file-naming.md](./markdown-file-naming.md) - Apply file naming standards in compliant directories

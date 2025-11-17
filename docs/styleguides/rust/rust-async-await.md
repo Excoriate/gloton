@@ -178,6 +178,7 @@ pub trait DynMessageBus {
 ## Implementation
 
 Cursor IDE and linters should enforce these practices through:
+
 - **Detection of blocking calls**: Flag usage of `std::thread::sleep`, `std::fs`, etc., inside `async` blocks.
 - **Runtime validation**: Ensure `#[tokio::main]` or another runtime entry point is present for binaries with `.await` calls.
 - **Future execution**: Warn if a `Future` is created but not `.await`ed or `spawn`ed.

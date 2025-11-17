@@ -36,6 +36,7 @@ Systematic profiling is the foundation of performance optimization in Rust. This
 **MANDATORY**: Never optimize based on intuition - measure with profiling tools first.
 
 **Profiling Tool Selection:**
+
 - **cargo flamegraph**: CPU profiling with visual flame graphs (default for CPU bottlenecks)
 - **perf**: Hardware event profiling (cache misses, branch mispredictions, IPC)
 - **valgrind**: Memory profiling (heap allocations, leaks, cache simulation)
@@ -49,6 +50,7 @@ Systematic profiling is the foundation of performance optimization in Rust. This
 **MANDATORY**: Focus optimization on code paths consuming >5% of total execution time.
 
 **Hot Path Identification:**
+
 ```bash
 # Generate flame graph
 cargo flamegraph --bin your_binary
@@ -66,6 +68,7 @@ cargo flamegraph --bin your_binary
 **MANDATORY**: When CPU bottlenecks are identified, analyze hardware events with perf.
 
 **Critical Hardware Events:**
+
 ```bash
 # Cache miss analysis
 perf stat -e cache-references,cache-misses ./target/release/binary
@@ -82,6 +85,7 @@ perf report
 ```
 
 **Interpretation:**
+
 - **High cache misses**: Memory layout issues (see rust-memory-optimization.md)
 - **High branch misses**: Unpredictable control flow (consider branch prediction hints)
 - **Low IPC**: CPU pipeline stalls (check dependencies, memory latency)
@@ -93,6 +97,7 @@ perf report
 **MANDATORY**: Examine call graphs to identify unexpected function call overhead.
 
 **Call Graph Analysis:**
+
 ```bash
 # Generate call graph with perf
 perf record --call-graph dwarf ./target/release/binary
@@ -105,6 +110,7 @@ perf report --stdio --no-children
 ```
 
 **Red Flags in Call Graphs:**
+
 - Allocation functions (`alloc::alloc`, `Vec::grow`) in hot paths
 - Dynamic dispatch (`<dyn Trait>::method`) in tight loops
 - Deep recursion with no tail call optimization
@@ -117,6 +123,7 @@ perf report --stdio --no-children
 **MANDATORY**: Always profile optimized release builds with debug symbols for accurate results.
 
 **Cargo Configuration:**
+
 ```toml
 # Cargo.toml
 [profile.release]
@@ -135,6 +142,7 @@ force-frame-pointers = true # For better stack traces
 **MANDATORY**: Record profiling results (flame graphs, perf stats, bottleneck locations) before making changes.
 
 **Documentation Template:**
+
 ```rust
 // Performance Profile (YYYY-MM-DD)
 // Profiling tool: cargo flamegraph
@@ -157,21 +165,25 @@ fn compute_intensive(data: &[u8]) -> u32 {
 Cursor IDE and profiling tools should enforce these practices through:
 
 **Automated Profiling Integration:**
+
 - Detect optimization commits (keywords: "optimize", "performance", "faster")
 - Require profiling data attachment (flame graph, perf report) in commit message or PR
 - Flag optimization without baseline measurements
 
 **Profiling Tool Validation:**
+
 - Verify `cargo flamegraph` installation: `cargo install flamegraph`
 - Check `perf` availability on Linux: `which perf`
 - Validate `Cargo.toml` has `[profile.release] debug = true`
 
 **Hot Path Analysis:**
+
 - Parse flame graph SVG to extract function time percentages
 - Identify functions with >5% time consumption
 - Generate hot path report sorted by time
 
 **Call Graph Inspection:**
+
 - Parse `perf report` output for dynamic dispatch patterns
 - Detect allocation functions in hot paths
 - Flag deep call stacks (>10 levels) in performance-critical code

@@ -65,6 +65,7 @@ Enforce structured logging patterns using `tracing` macros with appropriate log 
 ## Implementation
 
 Cursor IDE enforcement:
+
 - **Detection**: Flag `println!`, `eprintln!`, or `log::*` macro usage
 - **Suggestion**: Recommend `tracing::*` macros with structured fields
 - **Validation**: Check for structured field usage (key-value pairs)
@@ -195,6 +196,7 @@ pub async fn handle_request(request: &Request) -> Result<Response, Error> {
 ```
 
 **Why incorrect patterns fail:**
+
 - `println!` and `eprintln!` lack structure, filtering, and log level control
 - `log` crate doesn't integrate with tracing spans and async contexts
 - String interpolation (`{}`) prevents structured queries in log aggregation systems

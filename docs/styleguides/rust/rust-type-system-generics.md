@@ -22,9 +22,9 @@ alwaysApply: true
 
 Rust's power to create zero-cost abstractions comes from the cohesive interplay of its type system components:
 
-1.  **Generics**: Allow code to be written abstractly over different types, reducing duplication.
-2.  **Traits**: Define shared behavior that generic types can be constrained to, ensuring type safety.
-3.  **Lifetimes**: A form of generics that ensures that all references are valid, a cornerstone of Rust's memory safety.
+1. **Generics**: Allow code to be written abstractly over different types, reducing duplication.
+2. **Traits**: Define shared behavior that generic types can be constrained to, ensuring type safety.
+3. **Lifetimes**: A form of generics that ensures that all references are valid, a cornerstone of Rust's memory safety.
 
 These concepts are interdependent. Generics are not useful without traits to constrain them, and both are subject to the lifetime rules enforced by the borrow checker. Together, they enable the creation of highly flexible, yet type-safe and performant, APIs.
 
@@ -104,13 +104,13 @@ pub trait Iterator {
 
 **MANDATORY**: Be familiar with and correctly use common traits from the standard library.
 
--   **`Sized`**: A marker trait indicating that a type has a known size at compile time. Most types are `Sized`. Use `?Sized` to opt-out, allowing for dynamically sized types (DSTs) like `&str` and `&[T]`.
--   **`Clone` vs. `Copy`**:
-    -   `Copy`: For types that can be duplicated with a simple bit-for-bit copy. The original value is still usable after assignment.
-    -   `Clone`: For types that need a more complex duplication process (e.g., allocating memory). `clone()` is an explicit method call.
--   **`Send` and `Sync`**: Marker traits for thread safety.
-    -   `Send`: A type is `Send` if it can be safely transferred to another thread.
-    -   `Sync`: A type is `Sync` if it can be safely shared between threads (i.e., `&T` is `Send`).
+- **`Sized`**: A marker trait indicating that a type has a known size at compile time. Most types are `Sized`. Use `?Sized` to opt-out, allowing for dynamically sized types (DSTs) like `&str` and `&[T]`.
+- **`Clone` vs. `Copy`**:
+  - `Copy`: For types that can be duplicated with a simple bit-for-bit copy. The original value is still usable after assignment.
+  - `Clone`: For types that need a more complex duplication process (e.g., allocating memory). `clone()` is an explicit method call.
+- **`Send` and `Sync`**: Marker traits for thread safety.
+  - `Send`: A type is `Send` if it can be safely transferred to another thread.
+  - `Sync`: A type is `Sync` if it can be safely shared between threads (i.e., `&T` is `Send`).
 
 ### 5. Use `const` Generics for Compile-Time Values
 
@@ -130,19 +130,19 @@ fn main() {
 
 ## Implementation
 
--   **Compiler Errors**: The Rust compiler is the primary enforcer of rules related to generics, traits, and lifetimes.
--   **Clippy Lints**:
-    -   `clippy::type_complexity`: Warns about types that are becoming too complex, suggesting type aliases.
-    -   `clippy::trivially_copy_pass_by_ref`: Suggests passing `Copy` types by value instead of by reference.
+- **Compiler Errors**: The Rust compiler is the primary enforcer of rules related to generics, traits, and lifetimes.
+- **Clippy Lints**:
+  - `clippy::type_complexity`: Warns about types that are becoming too complex, suggesting type aliases.
+  - `clippy::trivially_copy_pass_by_ref`: Suggests passing `Copy` types by value instead of by reference.
 
 ## Benefits
 
--   **Zero-Cost Abstractions**: Generics in Rust are monomorphized at compile time, meaning there is no runtime performance penalty for using them.
--   **Type Safety**: Trait bounds ensure that generic functions can only be called with types that support the required behavior.
--   **Code Reusability**: Write a function or data structure once and use it for many different types.
+- **Zero-Cost Abstractions**: Generics in Rust are monomorphized at compile time, meaning there is no runtime performance penalty for using them.
+- **Type Safety**: Trait bounds ensure that generic functions can only be called with types that support the required behavior.
+- **Code Reusability**: Write a function or data structure once and use it for many different types.
 
 ## References
 
--   [The Rust Book: Generic Data Types](https://doc.rust-lang.org/book/ch10-01-syntax.html)
--   [The Rust Book: Traits](https://doc.rust-lang.org/book/ch10-02-traits.html)
--   [The Rust Book: Lifetimes](https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html)
+- [The Rust Book: Generic Data Types](https://doc.rust-lang.org/book/ch10-01-syntax.html)
+- [The Rust Book: Traits](https://doc.rust-lang.org/book/ch10-02-traits.html)
+- [The Rust Book: Lifetimes](https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html)

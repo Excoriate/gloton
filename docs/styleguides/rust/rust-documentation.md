@@ -22,10 +22,10 @@ alwaysApply: true
 
 Effective Rust documentation is a cohesive system where different levels of documentation work together to provide a complete picture of a crate's functionality. This includes:
 
-1.  **Crate and Module-Level Documentation**: High-level overviews that explain the purpose and scope of the crate or module.
-2.  **Item-Level Documentation**: Detailed explanations for public functions, structs, enums, and traits.
-3.  **Code Examples**: Demonstrations of how to use the API, which also double as tests.
-4.  **Safety, Error, and Panic Contracts**: Clear communication of the conditions under which code may be unsafe, return an error, or panic.
+1. **Crate and Module-Level Documentation**: High-level overviews that explain the purpose and scope of the crate or module.
+2. **Item-Level Documentation**: Detailed explanations for public functions, structs, enums, and traits.
+3. **Code Examples**: Demonstrations of how to use the API, which also double as tests.
+4. **Safety, Error, and Panic Contracts**: Clear communication of the conditions under which code may be unsafe, return an error, or panic.
 
 These elements are interdependent. Crate-level documentation provides context for the modules, module documentation explains how items fit together, and item-level documentation, with its examples and safety notes, clarifies the specifics. `rustdoc` is the unifying tool that processes these components into a single, navigable HTML output.
 

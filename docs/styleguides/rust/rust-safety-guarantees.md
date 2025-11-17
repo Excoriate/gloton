@@ -33,12 +33,12 @@ This rule enforces the practice of clearly documenting the **safety invariants**
 
 **MANDATORY**: For any type that uses `unsafe` code to maintain its properties, you must document the invariants that the type guarantees.
 
--   **What to Document**:
-    -   Pointer validity (e.g., non-null, aligned, within bounds).
-    -   Internal consistency (e.g., `len <= capacity` for a custom vector).
-    -   Ownership and aliasing rules.
--   **Where to Document**: In a `/// # Safety` or `/// # Invariants` section in the type's documentation.
--   **Verification**: Use `debug_assert!` to check invariants in debug builds.
+- **What to Document**:
+  - Pointer validity (e.g., non-null, aligned, within bounds).
+  - Internal consistency (e.g., `len <= capacity` for a custom vector).
+  - Ownership and aliasing rules.
+- **Where to Document**: In a `/// # Safety` or `/// # Invariants` section in the type's documentation.
+- **Verification**: Use `debug_assert!` to check invariants in debug builds.
 
 ```rust
 /// A non-empty vector.
@@ -55,9 +55,9 @@ pub struct NonEmptyVec<T> {
 
 **MANDATORY**: Every `unsafe` function must have a `# Safety` section in its documentation explaining the contract that callers must uphold.
 
--   **Preconditions**: What must be true *before* the function is called.
--   **Postconditions**: What the function guarantees will be true *after* it is called.
--   **Invariants**: What remains true *during* the function's execution.
+- **Preconditions**: What must be true *before* the function is called.
+- **Postconditions**: What the function guarantees will be true *after* it is called.
+- **Invariants**: What remains true *during* the function's execution.
 
 ```rust
 /// Reads from a buffer at a given offset.
@@ -77,9 +77,9 @@ pub unsafe fn read_at_offset(buffer: *const u8, offset: usize) -> u8 {
 
 **MANDATORY**: When implementing an `unsafe` trait like `Send`, `Sync`, or `GlobalAlloc`, you must provide a `# Safety` section explaining why the implementation is sound.
 
--   **`Send`**: Justify why the type can be safely moved to another thread.
--   **`Sync`**: Justify why the type can be safely shared between threads (i.e., accessed via `&T`).
--   **`GlobalAlloc`**: Justify why the allocator implementation is sound and meets the required invariants (e.g., alignment, non-overlapping memory blocks).
+- **`Send`**: Justify why the type can be safely moved to another thread.
+- **`Sync`**: Justify why the type can be safely shared between threads (i.e., accessed via `&T`).
+- **`GlobalAlloc`**: Justify why the allocator implementation is sound and meets the required invariants (e.g., alignment, non-overlapping memory blocks).
 
 ```rust
 struct MyRawHandle(*mut u8);
@@ -95,8 +95,8 @@ unsafe impl Send for MyRawHandle {}
 
 **MANDATORY**: For functions that deal with raw pointers, explicitly document ownership and lifetime semantics.
 
--   **Ownership**: Specify whether a function takes ownership of a pointer (and is thus responsible for freeing it) or merely borrows it.
--   **Lifetimes**: If a returned reference is derived from an input pointer, explain the lifetime relationship.
+- **Ownership**: Specify whether a function takes ownership of a pointer (and is thus responsible for freeing it) or merely borrows it.
+- **Lifetimes**: If a returned reference is derived from an input pointer, explain the lifetime relationship.
 
 ```rust
 /// Creates a new resource and returns a pointer to it.
@@ -120,19 +120,19 @@ pub unsafe extern "C" fn destroy_resource(ptr: *mut MyResource) {
 
 ## Implementation
 
--   **Clippy Lints**:
-    -   `clippy::missing_safety_doc`: Enforces that all `unsafe` functions and trait implementations have a `# Safety` block.
-    -   `clippy::undocumented_unsafe_blocks`: Suggests adding comments to explain the reasoning behind `unsafe` blocks.
--   **Code Review**: Manually audit `unsafe` code to ensure that the documented contracts are sufficient and correctly implemented.
+- **Clippy Lints**:
+  - `clippy::missing_safety_doc`: Enforces that all `unsafe` functions and trait implementations have a `# Safety` block.
+  - `clippy::undocumented_unsafe_blocks`: Suggests adding comments to explain the reasoning behind `unsafe` blocks.
+- **Code Review**: Manually audit `unsafe` code to ensure that the documented contracts are sufficient and correctly implemented.
 
 ## Benefits
 
--   **Correctness**: Formal contracts enable rigorous reasoning about the safety of `unsafe` code.
--   **Auditability**: Clear invariants and contracts make security and correctness reviews more effective.
--   **Maintainability**: Documented safety contracts prevent future changes from accidentally violating safety guarantees.
--   **Composability**: Well-specified `unsafe` abstractions can be safely composed into larger, safe systems.
+- **Correctness**: Formal contracts enable rigorous reasoning about the safety of `unsafe` code.
+- **Auditability**: Clear invariants and contracts make security and correctness reviews more effective.
+- **Maintainability**: Documented safety contracts prevent future changes from accidentally violating safety guarantees.
+- **Composability**: Well-specified `unsafe` abstractions can be safely composed into larger, safe systems.
 
 ## References
 
--   [The Rustonomicon: The Dark Arts of Unsafe Rust](https://doc.rust-lang.org/nomicon/index.html)
--   [The Rust Reference: Undefined Behavior](https://doc.rust-lang.org/reference/behavior-considered-undefined.html)
+- [The Rustonomicon: The Dark Arts of Unsafe Rust](https://doc.rust-lang.org/nomicon/index.html)
+- [The Rust Reference: Undefined Behavior](https://doc.rust-lang.org/reference/behavior-considered-undefined.html)

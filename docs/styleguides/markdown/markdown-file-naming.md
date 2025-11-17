@@ -12,6 +12,7 @@ alwaysApply: true
 This rule enforces consistent markdown file naming conventions across the entire repository. Markdown files MUST use dashes (`-`) as word separators, maintaining lowercase ASCII-only characters. This creates a clear visual distinction from directory naming patterns (which use underscores) and ensures maximum compatibility.
 
 **Primary Focus Areas:**
+
 - Dash word separators (`-`) for markdown files
 - Lowercase-only enforcement
 - ASCII character compatibility
@@ -23,7 +24,7 @@ This rule enforces consistent markdown file naming conventions across the entire
 
 1. **Word Separator Pattern**
    - MUST use dashes (`-`) as word separators
-   - PROHIBITED: Underscores (`_`), spaces (` `), or camelCase
+   - PROHIBITED: Underscores (`_`), spaces (``), or camelCase
    - Examples: `readme.md`, `contributing-guide.md`, `api-documentation.md`
 
 2. **Case Enforcement**
@@ -56,6 +57,7 @@ This rule enforces consistent markdown file naming conventions across the entire
 - Suggested corrections for violations
 
 **Validation Triggers:**
+
 - New markdown file creation anywhere in repository
 - Markdown file renaming operations
 - Repository structure scanning
@@ -97,6 +99,7 @@ stdlib/
 ### Common Violations and Fixes
 
 **Underscore Usage (Wrong Separator):**
+
 ```text
 ❌ readme_file.md              →  ✅ readme-file.md
 ❌ contributing_guide.md       →  ✅ contributing-guide.md
@@ -105,6 +108,7 @@ stdlib/
 ```
 
 **Capitalization Violations:**
+
 ```text
 ❌ README.md                   →  ✅ readme.md
 ❌ CONTRIBUTING.md             →  ✅ contributing.md
@@ -113,6 +117,7 @@ stdlib/
 ```
 
 **CamelCase Violations:**
+
 ```text
 ❌ apiDocumentation.md         →  ✅ api-documentation.md
 ❌ securityPolicy.md           →  ✅ security-policy.md
@@ -121,6 +126,7 @@ stdlib/
 ```
 
 **Space and Special Character Violations:**
+
 ```text
 ❌ API Documentation.md        →  ✅ api-documentation.md
 ❌ Security Policy.md          →  ✅ security-policy.md
@@ -131,6 +137,7 @@ stdlib/
 ### Validation Commands
 
 **Find Non-Compliant Markdown Files:**
+
 ```bash
 # Find markdown files with underscores
 find . -type f -name "*.md" | grep "_"
@@ -146,6 +153,7 @@ find . -type f -name "*.*.md"
 ```
 
 **Batch Rename Non-Compliant Files:**
+
 ```bash
 # Convert underscores to dashes
 for file in $(find . -type f -name "*_*.md"); do
@@ -171,6 +179,7 @@ done
 ### Special Cases
 
 **Single-Word Files** (No Separator Needed):
+
 ```text
 ✅ readme.md
 ✅ license.md
@@ -180,6 +189,7 @@ done
 ```
 
 **Acronyms and Abbreviations** (Lowercase):
+
 ```text
 ✅ api-reference.md            (not API-Reference.md)
 ✅ html-guide.md               (not HTML-Guide.md)
@@ -196,18 +206,22 @@ done
 ## Pipeline Position
 
 **Prerequisites**:
+
 - [markdown-directory-naming.md](./markdown-directory-naming.md) - Directories must exist before files created in them
 
 **Input Assumptions:**
+
 - User creating or renaming markdown files
 - Directory structure follows naming standards
 
 **Output Guarantees:**
+
 - All markdown files follow dash pattern
 - All markdown files are lowercase
 - All markdown files are ASCII-compatible
 - File names are URL-friendly
 
 **Next Steps**:
+
 - [markdown-mandatory-metadata.md](./markdown-mandatory-metadata.md) - Add YAML frontmatter to file
 - [markdown-formatting.md](./markdown-formatting.md) - Format markdown content

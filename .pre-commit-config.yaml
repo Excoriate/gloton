@@ -48,8 +48,38 @@ repos:
       - id: pretty-format-json
         name: 📝 Format JSON files
         description: Automatically format JSON files
-      - id: check-docstring-first
-        name: 📝 Check docstring placement
-        description: Ensure docstrings appear before code
-        args:
-          - '--autofix'
+      - id: check-yaml
+        name: ✅ Validate YAML syntax
+        description: Check YAML files for syntax errors
+      - id: check-toml
+        name: ✅ Validate TOML syntax
+        description: Check TOML files (Cargo.toml) for syntax errors
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Rust-Specific Hooks
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        name: 🦀 Format Rust code
+        description: Run cargo fmt to format Rust code
+      - id: cargo-check
+        name: 🦀 Check Rust code
+        description: Run cargo check to verify code compiles
+      - id: clippy
+        name: 🦀 Lint Rust code
+        description: Run cargo clippy for Rust linting
+        args: ['--all-targets', '--all-features', '--', '-D', 'warnings']
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Markdown Linting
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        name: 📝 Lint Markdown files
+        description: Check Markdown files for style violations
+        args: ['--fix']
+        exclude: '^docs/styleguides/'  # Exclude styleguide docs (intentional violations for examples)

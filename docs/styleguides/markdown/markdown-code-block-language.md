@@ -52,7 +52,9 @@ This rule enforces mandatory language specification for all fenced code blocks i
 ### ✅ Correct Code Blocks
 
 ` ``markdown
+
 # JavaScript Example
+
 ` ``javascript
 function greet(name) {
   console.log(`Hello, ${name}!`);
@@ -60,12 +62,16 @@ function greet(name) {
 ` ``
 
 # Shell Script Example
+
 ` ``bash
-#!/bin/bash
+
+# !/bin/bash
+
 echo "Hello, World!"
 ` ``
 
 # Plain Text Example
+
 ` ``text
 This is plain text without syntax highlighting
 ` ``
@@ -74,7 +80,9 @@ This is plain text without syntax highlighting
 ### ❌ Incorrect Code Blocks
 
 ` ``markdown
+
 # No Language Specified (VIOLATION)
+
 ` ``
 function noLanguage() {
   return "This will fail validation";
@@ -82,8 +90,11 @@ function noLanguage() {
 ` ``
 
 # Content suggests language but not specified (VIOLATION)
+
 ` ``
-#!/bin/bash
+
+# !/bin/bash
+
 echo "Language identifier missing"
 ` ``
 ` ``
@@ -99,12 +110,15 @@ echo "Language identifier missing"
 **Prerequisites**: None (foundational formatting rule)
 
 **Input Assumptions**:
+
 - Markdown file exists
 - Contains fenced code blocks
 
 **Output Guarantees**:
+
 - All code blocks have explicit language identifiers
 - Syntax highlighting enabled in all viewers
 
 **Next Steps**:
+
 - [markdown-spacing.md](./markdown-spacing.md) - Apply spacing standards around code blocks

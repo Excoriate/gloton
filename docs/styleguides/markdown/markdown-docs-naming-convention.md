@@ -12,6 +12,7 @@ alwaysApply: true
 This rule enforces consistent naming conventions within the docs/ folder structure to maintain organizational clarity and discoverability. The rule ensures all directories and markdown files follow the established numerical prefixing patterns that facilitate logical ordering and hierarchical organization.
 
 **Primary Focus Areas:**
+
 - Directory naming with numerical prefixes and underscores
 - Markdown file naming with numerical prefixes and dashes
 - Hierarchical numbering consistency
@@ -65,6 +66,7 @@ This rule enforces consistent naming conventions within the docs/ folder structu
 - Checks for numerical sequence gaps and suggests appropriate numbers
 
 **Validation Triggers:**
+
 - File creation within docs/ directory
 - Directory creation within docs/ structure
 - File renaming operations
@@ -107,6 +109,7 @@ docs/
 ### Directory Naming Examples
 
 **✅ Correct:**
+
 - `00_context_engineering`
 - `01_overview`
 - `02_concepts`
@@ -115,6 +118,7 @@ docs/
 - `01_1_product_requirement_promps`
 
 **❌ Incorrect:**
+
 - `context-engineering` (missing number prefix)
 - `1_overview` (not zero-padded)
 - `02-concepts` (dash instead of underscore)
@@ -124,12 +128,14 @@ docs/
 ### File Naming Examples
 
 **✅ Correct:**
+
 - `00-prp-codebase-analysis.md`
 - `01-1-prp-repository-github-configure.md`
 - `02-2-1-context-engineering.md`
 - `01-1-prp-repository-github-configure-v2.md`
 
 **❌ Incorrect:**
+
 - `prp-codebase-analysis.md` (missing number prefix)
 - `1-1-prp-repository.md` (not zero-padded)
 - `02_1_context_engineering.md` (underscore instead of dash)
@@ -152,6 +158,7 @@ docs/
 ### Common Violations and Fixes
 
 **Directory Violations:**
+
 ```
 ❌ context engineering/     →  ✅ 00_context_engineering/
 ❌ 1_Overview/              →  ✅ 01_overview/
@@ -160,6 +167,7 @@ docs/
 ```
 
 **File Violations:**
+
 ```
 ❌ Overview.md              →  ✅ 00-overview.md
 ❌ 1-quick-start.md         →  ✅ 01-quick-start.md

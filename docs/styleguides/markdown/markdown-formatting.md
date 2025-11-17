@@ -14,6 +14,7 @@ replacement_rules: ["markdown-code-block-language.md", "markdown-header-hierarch
 **This rule is DEPRECATED** as of 2025-01-09 and has been replaced by four atomic, focused rules following Unix Philosophy principles:
 
 **Use these atomic rules instead:**
+
 - **[markdown-code-block-language.md](./markdown-code-block-language.md)** - Code block language specification only
 - **[markdown-header-hierarchy.md](./markdown-header-hierarchy.md)** - Header formatting and hierarchy only
 - **[markdown-spacing.md](./markdown-spacing.md)** - Spacing around markdown elements only
@@ -22,19 +23,22 @@ replacement_rules: ["markdown-code-block-language.md", "markdown-header-hierarch
 ## Reason for Deprecation
 
 This rule violated **Single Responsibility Principle** by covering FOUR distinct concerns:
+
 1. Code block language specification (separate formatting domain)
 2. Header hierarchy and formatting (separate structural domain)
 3. Spacing requirements (separate layout domain)
 4. Cross-document linking standards (separate referencing domain)
 
 **Unix Philosophy Violation:**
+
 - ❌ Did not do ONE thing well (did FOUR things)
 - ❌ Not composable (monolithic validation spanning unrelated concerns)
 - ❌ Not pipeable (mixed concerns prevent sequential application and clear pipeline)
 
 ## Migration to Atomic Rules
 
-### Before (Deprecated - Monolithic):
+### Before (Deprecated - Monolithic)
+
 ```text
 Single Rule: markdown-formatting.md
 ├─ Validates code block languages
@@ -44,7 +48,8 @@ Single Rule: markdown-formatting.md
 └─ Mixed validation logic across unrelated domains
 ```
 
-### After (Unix-Style - Atomic):
+### After (Unix-Style - Atomic)
+
 ```text
 Rule 1: markdown-code-block-language.md
 ├─ Validates ONLY code block language specification
@@ -79,12 +84,14 @@ Rule 4: markdown-cross-references.md
 ## Action Required
 
 **If you relied on this rule:**
+
 1. The atomic replacement rules are automatically active
 2. No configuration changes needed
 3. Enhanced validation functionality available
 4. Better error messages and suggestions
 
 **No Breaking Changes:**
+
 - All validation still occurs
 - Enhanced with better separation of concerns
 - Improved user experience with focused rules
@@ -98,6 +105,7 @@ Rule 4: markdown-cross-references.md
 This rule enforced comprehensive markdown formatting standards to ensure consistent, high-quality documentation across all markdown files. The rule combined industry-standard markdownlint best practices with specific CLAUDE.md compliance guidelines to create maintainable, readable, and properly structured documentation.
 
 **Primary Focus Areas (DEPRECATED - now split across 4 rules):**
+
 - Code block language specification requirements → markdown-code-block-language.md
 - Header hierarchy and formatting standards → markdown-header-hierarchy.md
 - Spacing and indentation consistency → markdown-spacing.md
@@ -110,7 +118,7 @@ This rule enforced comprehensive markdown formatting standards to ensure consist
 
 1. **Code Block Language Specification**
    - Replace generic ``` with ```markdown or specific language identifier
-   - Always specify language for fenced code blocks: ```javascript, ```bash, ```python, etc.
+   - Always specify language for fenced code blocks: ```javascript,```bash, ```python, etc.
    - Use ```markdown for markdown content examples
    - Use ```text for plain text examples
 
@@ -181,6 +189,7 @@ More content here.
   ```
 
 - Another item
+
 ```
 
 ### ❌ Incorrect Code Block Formatting
@@ -192,9 +201,11 @@ More content here.
 
 Content without spacing.
 ```
+
 function badExample() {
   console.log("No language specified");
 }
+
 ```
 More content immediately after.
 
@@ -204,11 +215,13 @@ More content immediately after.
 ```bash
 echo "Improper indentation"
 ```
+
 ```
 
 ### File Structure Requirements
 
 ```
+
 project/
 ├── docs/
 │   ├── README.md          ✅ Follows standards
@@ -218,6 +231,7 @@ project/
 │   └── rules/
 │       └── docs-markdown-formatting.mdc
 └── CLAUDE.md              ✅ Source of standards
+
 ```
 
 ### Common Violations and Fixes
@@ -230,10 +244,12 @@ project/
 
 ✅ ```text
    code with language specified
+
    ```
 ```
 
 **Header Violations:**
+
 ```markdown
 ❌ **Important Section**
 ❌   # Indented Header
@@ -245,6 +261,7 @@ project/
 ```
 
 **Spacing Issues:**
+
 ```markdown
 ❌ # Header
 Content immediately following
@@ -261,6 +278,7 @@ Content with proper spacing
 ```python
 code_with_proper_spacing()
 ```
+
 ```
 
 **Cross-Document Linking:**
@@ -273,4 +291,3 @@ code_with_proper_spacing()
 
 ✅ For more information, refer to the [contribution guide](./CONTRIBUTING.md).
 ```
-

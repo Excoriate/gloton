@@ -20,6 +20,7 @@ replaced_by:
 3. **[rust-workspace-dependencies.md](./rust-workspace-dependencies.md)** - Workspace-level dependency management and inheritance
 
 **Migration:**
+
 - Review the three new rules to understand the reorganization
 - Update any references to this file to point to the appropriate new rule
 - This file is preserved for backward compatibility but will not be updated
@@ -67,6 +68,7 @@ This rule enforces best practices for Cargo and dependency management in Rust pr
 ## Examples
 
 ### Good
+
 ```toml
 [package]
 name = "my-project"
@@ -109,6 +111,7 @@ cc = "1.0"
 ```
 
 ### Bad
+
 ```toml
 [package]
 name = "bad-project"
@@ -136,6 +139,7 @@ members = ["*"]
 ## Implementation
 
 Cursor IDE and cargo tools should enforce these practices through:
+
 - Automated dependency version validation
 - Workspace structure linting
 - Feature flag organization checks
@@ -145,6 +149,7 @@ Cursor IDE and cargo tools should enforce these practices through:
 ## Benefits
 
 Proper dependency management ensures:
+
 - **Reproducible builds**: Specific version constraints prevent unexpected breakage
 - **Security through version control**: Avoid vulnerable dependency versions
 - **Efficient dependency resolution**: Workspace organization reduces duplication

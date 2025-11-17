@@ -38,6 +38,7 @@ Criterion is Rust's industry-standard benchmarking library, providing statistica
 **MANDATORY**: Use Criterion (not the unstable, nightly-only built-in `#[bench]`) for all performance benchmarks requiring statistical rigor.
 
 **Criterion Setup:**
+
 ```toml
 # Cargo.toml
 [dev-dependencies]
@@ -49,6 +50,7 @@ harness = false  # Disable default benchmark harness to use Criterion's
 ```
 
 **Basic Benchmark Structure:**
+
 ```rust
 // benches/my_benchmark.rs
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -67,6 +69,7 @@ criterion_main!(benches);
 ```
 
 **Why Criterion Over `#[bench]`:**
+
 - **Statistical Analysis**: Provides mean, standard deviation, and confidence intervals.
 - **Outlier Detection**: Filters measurement noise for more accurate results.
 - **HTML Reports**: Generates detailed visual reports with plots and trend lines.
@@ -80,6 +83,7 @@ criterion_main!(benches);
 **MANDATORY**: Wrap benchmark inputs and outputs in `criterion::black_box()` to prevent the compiler from optimizing away the code being measured.
 
 **Black Box Pattern:**
+
 ```rust
 use criterion::black_box;
 
@@ -106,6 +110,7 @@ The Rust compiler is highly aggressive in its optimizations. If it can determine
 **MANDATORY**: Adjust Criterion's sample size and measurement time to suit the characteristics of the code being benchmarked.
 
 **Configuration Options:**
+
 ```rust
 use criterion::{Criterion, BenchmarkId, PlotConfiguration, AxisScale};
 use std::time::Duration;
@@ -131,6 +136,7 @@ fn configure_benchmark(c: &mut Criterion) {
 ```
 
 **Sample Size Guidelines:**
+
 - **Fast operations (<1µs)**: 1000+ samples.
 - **Medium operations (1µs-1ms)**: 100 samples (default).
 - **Slow operations (>1ms)**: 10-50 samples.
@@ -142,6 +148,7 @@ fn configure_benchmark(c: &mut Criterion) {
 **MANDATORY**: Understand and document Criterion's statistical output, including the mean, standard deviation, and confidence intervals.
 
 **Criterion Output Interpretation:**
+
 ```text
 my_function             time:   [48.123 µs 48.456 µs 48.891 µs]
                         change: [-2.3421% -1.8234% -1.2456%] (p = 0.00 < 0.05)
@@ -160,6 +167,7 @@ my_function             time:   [48.123 µs 48.456 µs 48.891 µs]
 **MANDATORY**: Benchmark functions with a range of input sizes to understand their algorithmic complexity and scaling behavior.
 
 **Parameterized Benchmark Pattern:**
+
 ```rust
 use criterion::{BenchmarkId, Criterion};
 
@@ -182,6 +190,7 @@ fn vector_sum(input: &[i32]) -> i32 {
     input.iter().sum()
 }
 ```
+
 This generates plots showing how execution time scales with input size, helping to identify complexities like O(n), O(n log n), or O(n²).
 
 **Detection**: Benchmarks of algorithms that operate on variable-sized inputs without parameterization.
@@ -191,6 +200,7 @@ This generates plots showing how execution time scales with input size, helping 
 **MANDATORY**: Integrate benchmark runs into your CI/CD pipeline to automatically detect performance regressions.
 
 **CI Configuration (GitHub Actions):**
+
 ```yaml
 # .github/workflows/benchmark.yml
 name: Benchmark
@@ -239,6 +249,7 @@ open target/criterion/report/index.html
 ## Implementation
 
 Cursor IDE and CI tools should enforce these practices by:
+
 - **Validating Criterion Configuration**: Check `Cargo.toml` for `criterion` and `harness = false`.
 - **Detecting Missing `black_box`**: Parse benchmark code to ensure inputs and outputs are wrapped.
 - **Analyzing Statistical Output**: Parse Criterion's output to require documentation of statistical metrics.

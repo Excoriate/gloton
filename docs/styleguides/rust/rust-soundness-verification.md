@@ -24,6 +24,7 @@ alwaysApply: true
 This rule enforces rigorous verification practices for unsafe Rust code including Miri testing for undefined behavior detection, safety proof documentation, and formal verification patterns using tools like Kani and Prusti.
 
 **Scope:**
+
 - Miri test suite integration and configuration
 - Safety proof documentation and invariant checking
 - Formal verification tool integration (Kani, Prusti, Creusot)
@@ -37,12 +38,14 @@ This rule enforces rigorous verification practices for unsafe Rust code includin
 ### 1. Miri Testing
 
 **Miri Integration:**
+
 - Add Miri tests for ALL unsafe code paths
 - Run Miri in CI for every commit touching unsafe code
 - Configure Miri flags for strict checking
 - Test edge cases: null pointers, unaligned access, data races
 
 **Miri Configuration (.cargo/config.toml):**
+
 ```toml
 [target.'cfg(miri)']
 runner = "miri"
@@ -56,6 +59,7 @@ rustflags = [
 ```
 
 **Test Coverage Requirements:**
+
 - Test all unsafe function entry points
 - Exercise boundary conditions (zero-sized types, null pointers)
 - Verify thread safety with concurrent test scenarios
@@ -64,6 +68,7 @@ rustflags = [
 ### 2. Safety Proof Documentation
 
 **Proof Structure:**
+
 ```rust
 /// # Safety Proof
 ///
@@ -82,12 +87,14 @@ rustflags = [
 ```
 
 **Proof Elements:**
+
 - **Preconditions:** Assumptions that caller must satisfy
 - **Invariants:** Properties that remain true throughout execution
 - **Postconditions:** Guarantees upon function return
 - **Verification:** Evidence supporting safety claims (tests, reviews, proofs)
 
 **Invariant Checking:**
+
 - Use `debug_assert!` to check invariants in debug builds
 - Add runtime checks for critical invariants in release builds
 - Document when invariants are established and maintained
@@ -95,6 +102,7 @@ rustflags = [
 ### 3. Formal Verification Integration
 
 **Kani (Model Checking):**
+
 ```rust
 #[cfg(kani)]
 #[kani::proof]
@@ -111,6 +119,7 @@ fn verify_unsafe_operation() {
 ```
 
 **Prusti (Verification with Contracts):**
+
 ```rust
 #[requires(!ptr.is_null())]
 #[requires(ptr as usize % std::mem::align_of::<T>() == 0)]
@@ -121,6 +130,7 @@ pub unsafe fn read_verified<T: Copy>(ptr: *const T) -> T {
 ```
 
 **Verification Workflow:**
+
 - Add verification proofs for critical unsafe functions
 - Run verification tools in CI on unsafe code changes
 - Document verification status in function comments
@@ -128,6 +138,7 @@ pub unsafe fn read_verified<T: Copy>(ptr: *const T) -> T {
 ### 4. Property-Based Testing
 
 **Proptest for Unsafe Code:**
+
 ```rust
 use proptest::prelude::*;
 
@@ -151,6 +162,7 @@ proptest! {
 ```
 
 **Property Selection:**
+
 - Test memory safety: no out-of-bounds access
 - Test thread safety: no data races under concurrent load
 - Test correctness: invariants hold for all inputs
@@ -159,6 +171,7 @@ proptest! {
 ### 5. Sanitizer Integration
 
 **AddressSanitizer (Memory Errors):**
+
 ```toml
 # .cargo/config.toml
 [target.x86_64-unknown-linux-gnu]
@@ -166,12 +179,14 @@ rustflags = ["-Zsanitizer=address"]
 ```
 
 **ThreadSanitizer (Data Races):**
+
 ```toml
 [target.x86_64-unknown-linux-gnu]
 rustflags = ["-Zsanitizer=thread"]
 ```
 
 **Sanitizer Coverage:**
+
 - Run AddressSanitizer on memory-unsafe operations
 - Run ThreadSanitizer on concurrent unsafe code
 - Add sanitizer runs to CI pipeline
@@ -182,17 +197,20 @@ rustflags = ["-Zsanitizer=thread"]
 Cursor IDE should enforce these practices through:
 
 **Static Analysis:**
+
 - Detect unsafe code without corresponding Miri tests
 - Flag missing safety proof documentation
 - Identify untested unsafe code paths in coverage reports
 
 **Build Integration:**
+
 - Configure Miri runner in .cargo/config.toml
 - Integrate Kani/Prusti verification in build.rs
 - Enable sanitizers for test builds
 - Fail CI on Miri errors
 
 **Documentation Validation:**
+
 - Require `# Safety Proof` section for complex unsafe code
 - Check that verification references point to actual tests
 - Validate proof structure completeness

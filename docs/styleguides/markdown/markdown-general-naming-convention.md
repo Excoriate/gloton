@@ -14,15 +14,18 @@ replacement_rules: ["markdown-directory-naming.md", "markdown-file-naming.md"]
 **This rule is DEPRECATED** as of 2025-01-09 and has been split into two atomic, focused rules following Unix Philosophy principles:
 
 **Use these atomic rules instead:**
+
 - **[markdown-directory-naming.md](./markdown-directory-naming.md)** - Directory naming standards (underscores)
 - **[markdown-file-naming.md](./markdown-file-naming.md)** - Markdown file naming standards (dashes)
 
 **Reason for Deprecation:**
 This rule violated **Single Responsibility Principle** by covering TWO distinct concerns:
+
 1. Directory naming conventions (separate domain)
 2. File naming conventions (separate domain)
 
 **Migration Path:**
+
 - Apply `markdown-directory-naming.md` for directory naming validation
 - Apply `markdown-file-naming.md` for markdown file naming validation
 - Both rules are fully compliant with Unix Philosophy (composable, pipeable, single responsibility)
@@ -34,6 +37,7 @@ This rule violated **Single Responsibility Principle** by covering TWO distinct 
 This rule enforces universal naming conventions across the entire repository to maintain consistency and clarity. Directories MUST use underscores as word separators, while markdown files MUST use dashes. This convention applies repository-wide, creating a clear visual distinction between directory and file naming patterns.
 
 **Primary Focus Areas:**
+
 - Directory naming with underscore separators
 - Markdown file naming with dash separators
 - Consistent lowercase usage
@@ -77,6 +81,7 @@ This rule enforces universal naming conventions across the entire repository to 
 - Highlights existing non-compliant names for correction
 
 **Validation Triggers:**
+
 - Directory creation anywhere in repository
 - Markdown file creation anywhere in repository
 - File/directory renaming operations
@@ -122,6 +127,7 @@ stdlib/
 ### Directory Naming Examples
 
 **✅ Correct:**
+
 - `cursor_rules`
 - `github_workflows`
 - `test_fixtures`
@@ -129,6 +135,7 @@ stdlib/
 - `utility_scripts`
 
 **❌ Incorrect:**
+
 - `cursor-rules` (uses dashes instead of underscores)
 - `githubWorkflows` (CamelCase instead of snake_case)
 - `test fixtures` (contains space)
@@ -138,6 +145,7 @@ stdlib/
 ### Markdown File Naming Examples
 
 **✅ Correct:**
+
 - `readme.md`
 - `contributing-guide.md`
 - `api-documentation.md`
@@ -145,6 +153,7 @@ stdlib/
 - `code-of-conduct.md`
 
 **❌ Incorrect:**
+
 - `README.md` (capitalization)
 - `contributing_guide.md` (underscores instead of dashes)
 - `API Documentation.md` (spaces and capitalization)
@@ -154,6 +163,7 @@ stdlib/
 ### Common Violations and Fixes
 
 **Directory Violations:**
+
 ```text
 ❌ cursor-rules/       →  ✅ cursor_rules/
 ❌ testFixtures/       →  ✅ test_fixtures/
@@ -162,6 +172,7 @@ stdlib/
 ```
 
 **Markdown File Violations:**
+
 ```text
 ❌ README.md           →  ✅ readme.md
 ❌ contributing_guide.md  →  ✅ contributing-guide.md

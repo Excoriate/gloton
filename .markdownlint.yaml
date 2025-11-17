@@ -1,0 +1,17 @@
+# Markdownlint configuration for Gloton
+# https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+# MD013/line-length - Disable line length checks (docs have intentionally long lines)
+MD013: false
+
+# MD025/single-title - Allow multiple H1 headers (useful for document sections)
+MD025: false
+
+# MD033/no-inline-html - Allow inline HTML (useful for complex formatting)
+MD033: false
+
+# MD040/fenced-code-language - Allow code blocks without language (generic examples)
+MD040: false
+
+# MD041/first-line-heading - Allow files without top-level heading
+MD041: false

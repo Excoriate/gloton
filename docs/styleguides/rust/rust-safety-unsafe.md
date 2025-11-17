@@ -19,6 +19,7 @@ replacement_rules:
 **Reason:** This rule has been split into 4 cohesive, specialized rules for better organization and maintainability.
 
 **Migration Path:**
+
 - For unsafe block patterns and raw pointers → Use `rust-unsafe-patterns.md`
 - For safety contracts and invariants → Use `rust-safety-guarantees.md`
 - For C FFI and binding generation → Use `rust-ffi-integration.md`
@@ -67,6 +68,7 @@ This rule enforces best practices for safe and unsafe code in Rust.
 ## Examples
 
 ### Good
+
 ```rust
 /// A safe wrapper around an unsafe FFI type.
 ///
@@ -131,6 +133,7 @@ impl AtomicCounter {
 ```
 
 ### Bad
+
 ```rust
 // Bad: Unsafe code without documentation
 pub unsafe fn process(ptr: *mut u8) {
@@ -151,6 +154,7 @@ pub extern "C" fn bad_ffi(ptr: *const u8) -> u32 {
 ## Implementation
 
 Cursor IDE and clippy should enforce these practices through:
+
 - Detection of undocumented unsafe blocks
 - Validation of safety invariant documentation
 - Checking for proper FFI null pointer handling
@@ -160,6 +164,7 @@ Cursor IDE and clippy should enforce these practices through:
 ## Benefits
 
 Proper safety practices ensure:
+
 - **Memory safety guarantees**: Documented invariants prevent memory corruption
 - **Thread safety**: Send/Sync markers enable safe concurrency
 - **FFI safety**: Proper C ABI handling prevents undefined behavior
@@ -170,4 +175,4 @@ Proper safety practices ensure:
 
 - [Rust Book - Unsafe Rust](https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html)
 - [Rust Reference - FFI](https://doc.rust-lang.org/reference/items/external-blocks.html)
-- [Rustonomicon](https://doc.rust-lang.org/nomicon) 
+- [Rustonomicon](https://doc.rust-lang.org/nomicon)

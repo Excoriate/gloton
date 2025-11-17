@@ -22,15 +22,16 @@ alwaysApply: true
 
 This rule unifies **dependency lifecycle management** concerns in Rust projects:
 
-1.  **Dependency Resolution** - How Cargo resolves compatible versions from specified constraints.
-2.  **Version Locking** - Using `Cargo.lock` to ensure reproducible builds across environments.
-3.  **Dependency Updates** - Managing version upgrades with `cargo update`, `cargo outdated`.
-4.  **Security Audits** - Detecting vulnerable dependencies with `cargo audit`.
-5.  **Policy Enforcement** - Using tools like `cargo-deny` to enforce contribution and licensing policies.
+1. **Dependency Resolution** - How Cargo resolves compatible versions from specified constraints.
+2. **Version Locking** - Using `Cargo.lock` to ensure reproducible builds across environments.
+3. **Dependency Updates** - Managing version upgrades with `cargo update`, `cargo outdated`.
+4. **Security Audits** - Detecting vulnerable dependencies with `cargo audit`.
+5. **Policy Enforcement** - Using tools like `cargo-deny` to enforce contribution and licensing policies.
 
 These aspects are tightly coupled because they all govern **HOW dependencies are resolved, locked, updated, and audited over time**. Resolution determines which versions are selected, locking ensures reproducibility, updates manage version evolution, audits ensure security compliance, and policy enforcement maintains legal and quality standards. Together, they form the complete lifecycle management of external dependencies from initial resolution to ongoing maintenance.
 
 **Separation Rationale:**
+
 - **Dependency Specification** (separate rule) handles declaration syntax: version constraints, features, attributes.
 - **Workspace Dependencies** (separate rule) handles multi-crate organization: workspace inheritance, path dependencies.
 
@@ -64,11 +65,12 @@ Effective dependency management ensures reproducible builds, security compliance
 - **Dry runs**: Use `cargo update --dry-run` to preview changes before applying them.
 
 **Update Workflow:**
-1.  Run `cargo outdated` to see what's new.
-2.  Review changelogs for breaking changes.
-3.  Update a single dependency: `cargo update -p <package_name>`.
-4.  Run tests and `cargo audit`.
-5.  Commit `Cargo.lock` with a descriptive message.
+
+1. Run `cargo outdated` to see what's new.
+2. Review changelogs for breaking changes.
+3. Update a single dependency: `cargo update -p <package_name>`.
+4. Run tests and `cargo audit`.
+5. Commit `Cargo.lock` with a descriptive message.
 
 ### 4. Security Audits
 
@@ -87,6 +89,7 @@ Effective dependency management ensures reproducible builds, security compliance
 - **Source Control**: Verify that all dependencies are sourced from trusted locations (e.g., crates.io).
 
 **Example `deny.toml` configuration:**
+
 ```toml
 [licenses]
 unlicensed = "deny"
@@ -104,6 +107,7 @@ unmaintained = "warn"
 ## Implementation
 
 **Cargo Tooling:**
+
 - `cargo update`: Updates dependencies as allowed by `Cargo.toml`.
 - `cargo tree`: Shows the full dependency graph.
 - `cargo install cargo-outdated`: Installs the outdated checker.
@@ -112,10 +116,10 @@ unmaintained = "warn"
 
 ## Benefits
 
-1.  **Reproducible Builds**: `Cargo.lock` ensures that every build uses the exact same dependency versions.
-2.  **Security**: `cargo audit` and `cargo-deny` help prevent the use of vulnerable or untrustworthy code.
-3.  **Stability**: Controlled updates prevent unexpected breaking changes from upstream dependencies.
-4.  **Compliance**: `cargo-deny` helps ensure that your project complies with licensing and other organizational policies.
+1. **Reproducible Builds**: `Cargo.lock` ensures that every build uses the exact same dependency versions.
+2. **Security**: `cargo audit` and `cargo-deny` help prevent the use of vulnerable or untrustworthy code.
+3. **Stability**: Controlled updates prevent unexpected breaking changes from upstream dependencies.
+4. **Compliance**: `cargo-deny` helps ensure that your project complies with licensing and other organizational policies.
 
 ## Examples
 

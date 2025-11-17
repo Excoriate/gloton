@@ -102,15 +102,18 @@ Check the [configuration guide](../config/settings.md#database-configuration).
 ## Pipeline Position
 
 **Prerequisites**:
+
 - [markdown-file-naming.md](./markdown-file-naming.md) - Files must be named correctly before linking
 - [markdown-header-hierarchy.md](./markdown-header-hierarchy.md) - Headers must exist for anchor links
 
 **Input Assumptions**:
+
 - Markdown files exist
 - File names follow naming standards
 - Headers exist for anchor references
 
 **Output Guarantees**:
+
 - All cross-document references use explicit link syntax
 - All links use relative paths
 - All anchor links use correct format (lowercase, dashes)

@@ -2,14 +2,18 @@
 name = "gloton"
 version = "0.1.0"
 authors = ["Alex Torres <me@alextorresruiz.xyz>"]
-edition = "2021"
-rust-version = "1.91"
-description = "A simple CLI tool built with Rust"
+edition = "2024"
+rust-version = "1.98.1"
+description = "An early-stage CLI for organizing repository collections across Git hosting platforms."
 license = "MIT"
-repository = "https://github.com/alextorresruiz/gloton"
-keywords = ["cli", "tool"]
-categories = ["command-line-utilities"]
-resolver = "2"
+repository = "https://github.com/Excoriate/gloton"
+readme = "README.md"
+publish = false
+
+resolver = "3"
+
+[lints.rust]
+unsafe_code = "forbid"
 
 [dependencies]
-clap = { version = "4.5.51", features = ["derive"] }
+clap = { version = "4.6.6", features = ["derive"] }

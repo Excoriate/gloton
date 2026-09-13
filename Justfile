@@ -1,77 +1,58 @@
-# Gloton CLI - Rust/Cargo Task Runner
+set minimum-version := "1.55.0"
+set default-list
 
-set shell := ["bash", "-uc"]
+cargo_home := env_var_or_default("CARGO_HOME", env_var("HOME") + "/.cargo")
+export PATH := cargo_home + "/bin:" + env_var("PATH")
 
-# Display available recipes
-default:
-    @just --list
+[doc("Prepare the pinned Rust toolchain and locked dependencies")]
+setup: doctor
+    cargo fetch --locked
 
-# Build the project in debug mode
-build:
-    cargo build
+[doc("Report the active developer toolchain and executable paths")]
+doctor:
+    @just --version
+    @rustup --version
+    @rustup show active-toolchain
+    @command -v rustc
+    @rustc --version
+    @command -v cargo
+    @cargo --version
+    @rustfmt --version
+    @cargo clippy --version
 
-# Build the project in release mode
-build-release:
-    cargo build --release
-
-# Run the CLI (hello command by default)
-run *ARGS:
-    cargo run -- {{ARGS}}
-
-# Run with hello command example
-hello NAME="World":
-    cargo run -- hello --name {{NAME}}
-
-# Check code without building
-check:
-    cargo check
-
-# Run all tests
-test:
-    cargo test
-
-# Format code with rustfmt
+[doc("Format all Rust source files")]
 fmt:
-    cargo fmt
+    cargo fmt --all
 
-# Check formatting without making changes
+[doc("Check Rust formatting without changing source")]
 fmt-check:
-    cargo fmt -- --check
+    cargo fmt --all -- --check
 
-# Run clippy linter
-clippy:
-    cargo clippy --all-targets --all-features -- -D warnings
+[doc("Lint all Rust targets and features; deny warnings")]
+lint:
+    cargo clippy --locked --all-targets --all-features -- -D warnings
 
-# Clean build artifacts
-clean:
-    cargo clean
+[positional-arguments]
+[doc("Run tests, optionally forwarding Cargo and test arguments")]
+test *args:
+    cargo test --locked "$@"
 
-# Install the binary locally
+[doc("Type-check all Rust targets and features")]
+check:
+    cargo check --locked --all-targets --all-features
+
+[doc("Build the Gloton debug binary")]
+build:
+    cargo build --locked
+
+[positional-arguments]
+[doc("Run Gloton with arguments")]
+run *args:
+    cargo run --locked -- "$@"
+
+[doc("Install Gloton from this checkout")]
 install:
-    cargo install --path .
+    cargo install --locked --path .
 
-# Full quality check: fmt, clippy, test, build
-ci: fmt-check clippy test build
-    @echo "✅ All checks passed!"
-
-# Development workflow: format, check, run
-dev: fmt check
-    cargo run -- hello
-
-# Install pre-commit hooks
-pre-commit-install:
-    pre-commit install
-    @echo "✅ Pre-commit hooks installed!"
-
-# Run pre-commit hooks on all files
-pre-commit-run:
-    pre-commit run --all-files
-
-# Update pre-commit hooks to latest versions
-pre-commit-update:
-    pre-commit autoupdate
-
-# Uninstall pre-commit hooks
-pre-commit-uninstall:
-    pre-commit uninstall
-    @echo "✅ Pre-commit hooks uninstalled!"
+[doc("Run the complete non-mutating repository gate")]
+ci: fmt-check lint test build

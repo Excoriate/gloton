@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "policy_version": "lesson-memory-v1",
+  "policy_sha256": "1be5e399d49f2d644ee86cde059837fcf6cffd6badee662a38f5b404f74dd9b8",
+  "as_of": "2026-09-13",
+  "lessons_file": ".ai/memory/lessons-learned.json",
+  "entries_total": 1,
+  "entry_ids_after": [
+    "LL-001"
+  ],
+  "covered_before": 1,
+  "covered_after": 1,
+  "coverage_complete": true,
+  "backfilled": [],
+  "unresolved_ids": [],
+  "corpus_sha256_after": "b444b6a1e0d2130428c6b8d85807a74ff3bfef1f9a424384439b77f04fa64a18"
+}

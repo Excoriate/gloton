@@ -1,18 +1,15 @@
-mod cli;
-
 use clap::Parser;
-use cli::{Cli, Commands};
+
+#[derive(Debug, Parser)]
+#[command(
+    name = "gloton",
+    version,
+    about = "Organize repository collections across Git hosting platforms",
+    long_about = None,
+    arg_required_else_help = true
+)]
+struct Cli {}
 
 fn main() {
-  let cli = Cli::parse();
-
-  match cli.command {
-    Commands::Hello { name } => {
-      let greeting = match name {
-        Some(n) => format!("Hello, {}!", n),
-        None => "Hello, World!".to_string(),
-      };
-      println!("{}", greeting);
-    }
-  }
+    Cli::parse();
 }

@@ -1,0 +1,159 @@
+{
+  "ci_relation": "aligned-through-just-ci",
+  "consumers": [
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "claude",
+      "evidence": "CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN",
+      "pointer_kind": "private-rule",
+      "pointer_path": ".claude/rules/cbharness-verification-surface.md",
+      "present": true
+    },
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "cursor",
+      "evidence": "DOCS-CONFIRMED_BINARY-UNVERIFIED",
+      "pointer_kind": "shared-entry",
+      "pointer_path": "AGENTS.md",
+      "present": true
+    },
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "codex",
+      "evidence": "CURRENT-TEMPLATE_BINARY-UNVERIFIED",
+      "pointer_kind": "shared-entry",
+      "pointer_path": "AGENTS.md",
+      "present": true
+    },
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "copilot",
+      "evidence": "DOCS-AND-BINARY-PROVEN",
+      "pointer_kind": "shared-entry",
+      "pointer_path": "AGENTS.md",
+      "present": true
+    },
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "omp",
+      "evidence": "CURRENT-TEMPLATE_BINARY-UNVERIFIED",
+      "pointer_kind": "shared-entry",
+      "pointer_path": "AGENTS.md",
+      "present": true
+    },
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "pi",
+      "evidence": "BINARY-PROVEN",
+      "pointer_kind": "shared-entry",
+      "pointer_path": "AGENTS.md",
+      "present": true
+    },
+    {
+      "claim_ceiling": "pointer emitted; runtime arrival remains bounded by the selected surface evidence",
+      "client": "antigravity",
+      "evidence": "DOCS-CONFIRMED_BINARY-UNVERIFIED",
+      "pointer_kind": "private-rule",
+      "pointer_path": ".agents/rules/cbharness-verification-surface.md",
+      "present": true
+    }
+  ],
+  "generated_at": "2026-09-13T16:51:11Z",
+  "routes": [
+    {
+      "acceptance": "the repository-owned Just gate passes, while a markerless duplicate rule makes the same harness gate fail",
+      "ci_authority": ".github/workflows/ci.yml",
+      "ci_command": "just ci",
+      "ci_relation": "aligned-through-just-ci",
+      "command": "./tests/verification-surface.sh",
+      "command_sha256": "sha256:ce8074bf21e35b184948c2c87eb63cc231f061c45260430aaba51b971e587678",
+      "does_not_prove": "hosted CI success or runtime rule arrival in Cursor and Antigravity",
+      "id": "shell-test-tests-verification-surface.sh-64e0e059b10b",
+      "last_exercised": "2026-09-13T17:37:36Z",
+      "match": "**/*",
+      "negative_argv": [
+        "./tests/verification-surface.sh",
+        "--negative"
+      ],
+      "pass_proves": "the Gloton build, lint, format, behavior, and rule-projection gates passed through just ci and rejected a relevant duplicate-policy mutation",
+      "positive_argv": [
+        "./tests/verification-surface.sh"
+      ],
+      "promotion_probe": "run verification-exercise.py in a disposable network-denied copy, then sanitize checkout paths before committing the receipt",
+      "single_test_template": "./tests/verification-surface.sh",
+      "source_evidence": [
+        {
+          "path": "Cargo.toml",
+          "sha256": "sha256:6574a4c8b88abd127192d6fc8c84a6e4401b3ab8ab6c017b9ca19fd4674fb7f0"
+        },
+        {
+          "path": "Justfile",
+          "sha256": "sha256:84be18bdb5db868f33265f3626148bd18b8617dc9f02986cfe6f579827189a1a"
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "sha256": "sha256:40d4226051d42edfb5cdf7a9db249daf833670aed1a2afcca03c715261b85849"
+        },
+        {
+          "path": "tests/cli.rs",
+          "sha256": "sha256:39da8c0173248425a49cd4a8f784154d09d024b05831cc34e01657e6b3883021"
+        },
+        {
+          "path": "tests/harness.rs",
+          "sha256": "sha256:c2678782281a2d114027aabd384bacd64cef96ef11f05176d5742eda6ab9a796"
+        },
+        {
+          "path": "tests/verification-surface.sh",
+          "sha256": "sha256:b4ffb7e3b83ea4f02a57596e3c78655ac368817a8cc8effc9463c537dcba99ca"
+        }
+      ],
+      "state": "discriminating",
+      "suite_command": "./tests/verification-surface.sh",
+      "tool_evidence": {
+        "binary_sha256": "sha256:b4ffb7e3b83ea4f02a57596e3c78655ac368817a8cc8effc9463c537dcba99ca",
+        "execution_policy": "repository-local executable; both positive and negative arms enter through Just",
+        "exercise": {
+          "isolation": {
+            "disposable_copy": true,
+            "isolated_home": true,
+            "network": "disabled",
+            "project_path": "<redacted-disposable-project>",
+            "project_path_redacted": true,
+            "sandbox": "/usr/bin/sandbox-exec",
+            "working_directory": "."
+          },
+          "negative_argv": [
+            "./tests/verification-surface.sh",
+            "--negative"
+          ],
+          "negative_exit": 101,
+          "negative_raw_sha256": "sha256:47b5304bb4fe01801b45b17c093a7d871135824984245aa08ded26bd1347db49",
+          "negative_tests_run": 0,
+          "positive_argv": [
+            "./tests/verification-surface.sh"
+          ],
+          "positive_exit": 0,
+          "positive_raw_sha256": "sha256:5e5f69c8b81ad7a61fcd214a487dcf11aaac27d7a7a11ed4965f72b546ea3c2f",
+          "positive_tests_run": 0,
+          "producer_sha256": "sha256:2b8c61bb9170dd7f1a78918f2878fbb10b2db1349b99e7e66d91e88ac3fc98c6",
+          "receipt_path": ".ai/harness/state/verification-evidence/shell-test-tests-verification-surface.sh-64e0e059b10b.json",
+          "receipt_sha256": "sha256:21774499dcf906720fd234ae17d34b34f3440945569a45bbbc55ca3c59febe6d"
+        },
+        "resolved_path": "tests/verification-surface.sh",
+        "tool": "repository-verifier",
+        "version_probe": "content-addressed:sha256:b4ffb7e3b83ea4f02a57596e3c78655ac368817a8cc8effc9463c537dcba99ca"
+      },
+      "working_directory": "."
+    }
+  ],
+  "schema": "verification-surface/v1",
+  "shards": [],
+  "source_files": {
+    ".github/workflows/ci.yml": "sha256:40d4226051d42edfb5cdf7a9db249daf833670aed1a2afcca03c715261b85849",
+    "Cargo.toml": "sha256:6574a4c8b88abd127192d6fc8c84a6e4401b3ab8ab6c017b9ca19fd4674fb7f0",
+    "Justfile": "sha256:84be18bdb5db868f33265f3626148bd18b8617dc9f02986cfe6f579827189a1a",
+    "tests/verification-surface.sh": "sha256:b4ffb7e3b83ea4f02a57596e3c78655ac368817a8cc8effc9463c537dcba99ca"
+  },
+  "source_fingerprint": "sha256:dbc54913a0596027d5d4e905009d4c96b2d39d9050b5ac89e3b9fd40dca6c05d",
+  "status": "fresh"
+}

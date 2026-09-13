@@ -2,17 +2,30 @@
 /target/
 **/*.rs.bk
 *.pdb
+*.dSYM/
 
-# Cargo lock file (kept for binaries, ignored for libraries)
-# Cargo.lock is committed for this binary project
+# Local environment
+.env
+.env.*
+!.env.example
 
-# IDE files
+# Editors and operating systems
 .idea/
-.vscode/
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/extensions.json
 *.swp
 *.swo
 *~
 .DS_Store
+Thumbs.db
 
-# Debug files
-*.dSYM/
+# Ephemeral agent task state; canonical harness and memory stay tracked
+/.ai/tasks/*
+!/.ai/tasks/.gitkeep
+/.ai/runtime/*
+!/.ai/runtime/.gitkeep
+/.ai/codebase-context/
+
+# Machine-path-dependent harness generation state
+/.ai/harness/state/rule-load-plan.json

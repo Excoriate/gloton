@@ -1,0 +1,24 @@
+[
+  {
+    "id": "LL-001",
+    "scope": [
+      "Justfile",
+      "rust-toolchain.toml",
+      ".github/workflows/*.yml"
+    ],
+    "category": "tool-gotcha",
+    "severity": "high",
+    "confidence": "validated",
+    "summary": "Ambient Homebrew Rust can shadow the repository rustup toolchain.",
+    "root_cause": "On 2026-09-13, /opt/homebrew/bin/rustc and cargo preceded ~/.cargo/bin rustup proxies in PATH. Stakes-class: break-shaped; a green local Cargo run can use a different compiler than CI and leave the sole authorized remote commit unrepairable. Falsifier: with Homebrew before Cargo home in ambient PATH, `just doctor` must still report rustup-managed Rust 1.98.1; reporting Homebrew rustc or cargo paths disproves the fix.",
+    "fix": "Keep rust-toolchain.toml as the sole compiler selector; derive Cargo home in Justfile, prepend its bin directory, and run just doctor before accepting toolchain evidence.",
+    "references": [
+      "Justfile",
+      "rust-toolchain.toml",
+      ".github/workflows/ci.yml"
+    ],
+    "added": "2026-09-13",
+    "last_validated": "2026-09-13",
+    "task_origin": "2026-09-13-001"
+  }
+]

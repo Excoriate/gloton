@@ -1,0 +1,85 @@
+# codebase-harness agent registry v1
+# record|agent_id|kind_or_display|path_or_subagents|mode_or_permissions|layout|suffix|dialect|evidence|ownership|notes
+# scan|agent_id|purpose|config_root|recursive|directory|||evidence|ownership|notes
+# loadset|agent_id|kind|surface_path|evidence_tier(A/B/C)|runtime_probe_id|activation_expectation|binary_path|binary_version|binary_sha256|probe_date|blocked_condition|claim_ceiling|notes
+# activation|agent_id|surface_path|dialect|key|expected_value|notes
+# Every agent declares exactly one recursive placeholder root. Existing emit/root-shared file surfaces are scanned exactly from surface rows; planned, preserve, and read-shared paths are outside this emitted-output check.
+# Exclusive roots MUST be strict parents of every emitted directory. Bounded roots MUST equal one shared emitted directory.
+# Shared vendor namespaces use bounded subroots; broad .agents and .github roots are FORBIDDEN.
+agent|claude|Claude Code|native|per-command||||||Native agents; project path details partly current-template evidence
+agent|cursor|Cursor|native|per-command||||||Docs confirm rich project surfaces; binary auto-load remains unverified where noted
+agent|codex|Codex CLI|native|per-command||||||Two installed binaries have version skew
+agent|copilot|GitHub Copilot|native|per-command||||||Broadest documented and binary-proven project surface
+agent|omp|OMP|native|per-tool-policy||||||Native task subagents; no CLI-proven project MCP path
+agent|pi|PI|extension-only|no-per-command||||||No native subagents; extensions may add them
+agent|antigravity|Google Antigravity|native|toolPermission+enableTerminalSandbox-CONFIRMED;permissions-array-UNVERIFIED;precedence-UNKNOWN||||||Distinct from retired Gemini CLI; no repository settings path is proven, so the simple permission shape requires an explicit absolute target
+surface|claude|instruction|CLAUDE.md|root-shared|root|.md|markdown|BINARY-PROVEN|shared|Auto-discovered root instruction
+surface|claude|rule|.claude/rules|emit|nested|.md|claude|CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN|owned|Exact project rule path not exposed by binary probe
+surface|claude|skill|.claude/skills|emit|directory|SKILL.md|skill|CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN|owned|Exact project skill path not exposed by binary probe
+surface|claude|agent|.claude/agents|emit|flat|.md|claude-agent|CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN|owned|Exact project agent path not exposed by binary probe
+surface|claude|hook|.claude/settings.json|emit|file|.json|json|CURRENT-TEMPLATE_BINARY-SCOPE-PROVEN|owned|Project settings category proven; exact filename current-template
+surface|claude|config|.claude/settings.json|emit|file|.json|json|DOCS-AND-BINARY-PROVEN|owned|Project lists merge with user lists; generator emits deny-only permissions and preserves an existing project file
+surface|cursor|instruction|AGENTS.md|root-shared|root|.md|markdown|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Docs-confirmed auto-load
+surface|cursor|instruction|CLAUDE.md|root-shared|root|.md|markdown|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Docs-confirmed auto-load
+surface|cursor|rule|.cursor/rules|emit|flat|.mdc|cursor|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Plain .md is inert; .mdc required
+surface|cursor|skill|.cursor/skills|emit|directory|SKILL.md|skill|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Native Cursor skill path
+surface|cursor|skill|.agents/skills|read-shared|directory|SKILL.md|skill|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Cross-tool compatibility path
+surface|cursor|skill|.claude/skills|read-shared|directory|SKILL.md|skill|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Reads Claude skills directly
+surface|cursor|skill|.codex/skills|read-shared|directory|SKILL.md|skill|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Reads Codex skills directly
+surface|cursor|agent|.cursor/agents|emit|flat|.md|cursor-agent|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Native Cursor subagent path
+surface|cursor|agent|.claude/agents|read-shared|flat|.md|claude-agent|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Reads Claude agents directly
+surface|cursor|agent|.codex/agents|read-shared|flat|.toml|codex-agent|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Reads Codex agents directly
+surface|cursor|hook|.cursor/hooks.json|emit|file|.json|json|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|17 documented agent hook events
+surface|cursor|config|.cursor/cli.json|preserve|file|.json|json|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Project permissions-only config; seed only when absent, empty allow plus explicit deny; global cli-config.json remains untouched
+surface|cursor|sandbox|.cursor/sandbox.json|preserve|file|.json|json|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Project overrides user on conflict; seed only the restrictive workspace-readonly and network-deny shape
+surface|cursor|mcp|.cursor/mcp.json|planned|file|.json|json|BINARY-PROVEN|owned|Project MCP config
+surface|codex|instruction|AGENTS.md|root-shared|root|.md|markdown|CURRENT-TEMPLATE_BINARY-UNVERIFIED|shared|Binary proves project rules but not AGENTS loading
+surface|codex|skill|.codex/skills|emit|directory|SKILL.md|skill|CURRENT-TEMPLATE_BINARY-UNVERIFIED|owned|Current harness adapter
+surface|codex|agent|.codex/agents|emit|flat|.toml|codex-agent|CURRENT-TEMPLATE_BINARY-UNVERIFIED|owned|Current harness adapter
+surface|codex|hook|.codex/hooks.json|planned|file|.json|json|BINARY-CATEGORY-PROVEN_PATH-UNVERIFIED|owned|Hooks live; project filename unverified
+surface|codex|config|.codex/config.toml|preserve|file|.toml|toml|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Project file is docs-confirmed; seed only top-level read-only and untrusted values before every table; preserve existing
+surface|copilot|instruction|.github/copilot-instructions.md|emit|file|.md|markdown|DOCS-AND-BINARY-PROVEN|owned|Repo-wide Copilot instruction
+surface|copilot|instruction|AGENTS.md|root-shared|root|.md|markdown|DOCS-AND-BINARY-PROVEN|shared|Cross-tool root instruction
+surface|copilot|instruction|CLAUDE.md|root-shared|root|.md|markdown|DOCS-CONFIRMED|shared|Cross-tool root instruction
+surface|copilot|instruction|GEMINI.md|read-shared|root|.md|markdown|DOCS-CONFIRMED|shared|Live Copilot surface; Gemini retirement must be identity-aware
+surface|copilot|rule|.github/instructions|emit|flat|.instructions.md|copilot|DOCS-CONFIRMED_BINARY-PARTIAL|shared|Path-scoped instructions; shared namespace
+surface|copilot|skill|.github/skills|planned|directory|SKILL.md|skill|DOCS-AND-BINARY-PROVEN|shared|Copilot-native project skill path
+surface|copilot|skill|.agents/skills|read-shared|directory|SKILL.md|skill|DOCS-AND-BINARY-PROVEN|shared|Shared vendor namespace
+surface|copilot|skill|.claude/skills|read-shared|directory|SKILL.md|skill|DOCS-AND-BINARY-PROVEN|shared|Reads Claude skills directly
+surface|copilot|agent|.github/agents|planned|flat|.agent.md|copilot-agent|DOCS-CONFIRMED|shared|Project custom agents
+surface|copilot|hook|.github/hooks|planned|directory|.json|json|DOCS-AND-BINARY-PROVEN|shared|13 documented events; preToolUse is fail-closed exception
+surface|copilot|config|.github/copilot/settings.json|preserve|file|.json|json|DOCS-CONFIRMED_BINARY-UNVERIFIED|owned|Project settings combine with user sources without a general precedence order; seed only ask-user and bypass-disable restrictions
+surface|copilot|mcp|.github/mcp.json|planned|file|.json|json|DOCS-AND-BINARY-PROVEN|owned|Workspace MCP config
+surface|omp|instruction|AGENTS.md|root-shared|root|.md|markdown|CURRENT-TEMPLATE_BINARY-UNVERIFIED|shared|Root entrypoint used by harness
+surface|omp|rule|.omp/rules|emit|flat|.md|omp|CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN|shared|Exact auto-load path unverified
+surface|omp|skill|.omp/skills|emit|directory|SKILL.md|skill|CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN|shared|Exact auto-load path unverified
+surface|omp|agent|.omp/agents|emit|flat|.md|omp-agent|BINARY-PROVEN_PATH_AUTOLOAD-UNVERIFIED|shared|Project export path is binary-proven
+surface|omp|config|.omp/config.yml|preserve|file|.yml|yaml|BINARY-CONFIRMED-KEYS_DOCS-SECONDARY-PROJECT-PATH|shared|Runtime > overlay > project > user; seed always-ask and prompt-only per-tool policy, never allow
+surface|pi|instruction|AGENTS.md|root-shared|root|.md|markdown|BINARY-PROVEN|shared|Auto-discovered unless context files disabled
+surface|pi|instruction|CLAUDE.md|root-shared|root|.md|markdown|BINARY-PROVEN|shared|Auto-discovered unless context files disabled
+surface|pi|skill|.pi/skills|emit|flat|.md|skill|CURRENT-TEMPLATE_BINARY-CATEGORY-PROVEN|owned|Flat layout; exact default path unverified
+surface|pi|config|.pi/settings.json|preserve|file|.json|json|DOCS-AND-BINARY-PROVEN|owned|Project objects merge over user config; empty template records deliberate degradation because PI has no per-command policy engine
+surface|antigravity|rule|.agents/rules|emit|flat|.md|antigravity|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Current plural workspace rules default
+surface|antigravity|rule|.agent/rules|forbidden|flat|.md|antigravity|DEPRECATED-THIRD-PARTY-ONLY|shared|Singular path is deprecated fallback; never emit
+surface|antigravity|instruction|GEMINI.md|forbidden|root|.md|markdown|COLLIDES-WITH-RETIRED-GEMINI-AND-COPILOT|shared|A10: never use for Antigravity project instructions
+surface|antigravity|instruction|.gemini|forbidden|directory||markdown|GLOBAL-ROOT-INCONSISTENT_PROJECT-OUT-OF-SCOPE|shared|Never emit project .gemini paths
+surface|antigravity|skill|.agents/skills|read-shared|directory|SKILL.md|skill|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Shared with Copilot and Cursor; do not prune
+surface|antigravity|agent|.agents/agents|planned|flat|.md|antigravity-agent|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Workspace custom agents
+surface|antigravity|hook|.agents/hooks.json|preserve|file|.json|json|DOCS-AND-BINARY-PROVEN|shared|Validate generated files; preserve hand-authored file byte-identical
+surface|antigravity|mcp|.agents/mcp_config.json|planned|file|.json|json|DOCS-CONFIRMED_BINARY-UNVERIFIED|shared|Project MCP config; no global path emitted
+loadset|claude|instruction|CLAUDE.md|A|phase0-claude-root-v1|root-context|/opt/homebrew/bin/claude|2.1.246|7b09f01cb76a38e0e3a7c47c5d698d382162a5ff26538fc778683770caf9218b|2026-08-26|-|serialized provider-bound effective context arrived|Tier A is scoped to root CLAUDE.md; rule wrappers remain unprobed
+loadset|pi|instruction|AGENTS.md|A|phase0-pi-root-v1|root-context|/opt/homebrew/bin/pi|0.84.3|1c3a5094b54aae9ae98c66516ce8c6578140363d081471ca7e91f9cb8c23dc8a|2026-08-26|-|serialized provider-bound effective context arrived|Tier A is scoped to root AGENTS.md
+loadset|omp|instruction|AGENTS.md|A|phase0-omp-root-v1|root-context|/opt/homebrew/bin/omp|18.0.6|68d911038e061d35c8caa6a71c91a15b60a98f8c5464ad9f47e5d1eaeda6be4c|2026-08-26|-|serialized provider-bound effective context arrived|Tier A re-probed on current 18.0.6 bytes; scoped to root AGENTS.md; .omp/rules remains unprobed
+loadset|codex|instruction|AGENTS.md|B|phase0-codex-root-v1|root-context|/opt/homebrew/bin/codex|0.149.1|f0d8762236594359b60cfbe17f4c7e945a3ce8d1c91e74778838c968d250fb6c|2026-08-26|-|model-visible prompt input contains carrier bytes|Directory-level attribution only; nested AGENTS.md sources merge
+loadset|copilot|instruction|.github/copilot-instructions.md|B|phase0-copilot-instruction-v1|repo-instruction|/opt/homebrew/bin/copilot|1.0.80|fe779da7dd2342c1d23f0744873fa27d0251eaaee4dc6637fa53093639c0f3c9|2026-08-26|-|serialized provider-bound effective context arrived|Exact bytes arrive without a source path
+loadset|antigravity|rule|.agents/rules|C|phase0-antigravity-rules-v1|file-touch-unobservable|/opt/homebrew/bin/agy|1.1.21|83c47451ab2ed8e9c6330c468d4261ecfdd65025d99da1254201696ef35c15f2|2026-08-26|isolated-profile-oauth-and-activation-state-unobservable|emitted to .agents/rules, whose installed runtime documentation specifies file-touch walk-up loading; file-byte presence and drift mechanically detected; activation state unobservable; arrival not runtime-proven|Never transfer standalone GEMINI.md always-active wording onto .agents/rules
+loadset|cursor|rule|.cursor/rules|C|phase0-cursor-rules-v1|registry-value-checked|/opt/homebrew/bin/cursor-agent|2026.08.11-e8db854|eed61c5224668c9236334c4c68936a16aecc37374b592f59e31eb50433817831|2026-08-26|model-request-transport-not-interceptable-and-auto-load-binary-unverified|emitted to the surface the installed vendor runtime documents as auto-loaded; presence and drift mechanically detected; arrival not runtime-proven|CLI rule auto-load and below-model arrival remain unverified; alwaysApply is checked by the activation relation
+activation|cursor|.cursor/rules|cursor|alwaysApply|source-type-governance|Expected true only when the centralized rule declares type governance
+activation|omp|.omp/rules|omp|alwaysApply|source-type-governance|Expected true only when the centralized rule declares type governance
+scan|claude|placeholder|.claude|recursive|directory|||REGISTRY-CONTRACT|exclusive|Whole Claude project configuration root
+scan|cursor|placeholder|.cursor|recursive|directory|||REGISTRY-CONTRACT|exclusive|Whole Cursor project configuration root
+scan|codex|placeholder|.codex|recursive|directory|||REGISTRY-CONTRACT|exclusive|Whole Codex project configuration root
+scan|copilot|placeholder|.github/instructions|recursive|directory|||REGISTRY-CONTRACT|bounded|Harness-owned Copilot subtree inside shared .github
+scan|omp|placeholder|.omp|recursive|directory|||REGISTRY-CONTRACT|exclusive|Whole OMP project configuration root, including human-tunable entry files
+scan|pi|placeholder|.pi|recursive|directory|||REGISTRY-CONTRACT|exclusive|Whole PI project configuration root
+scan|antigravity|placeholder|.agents/rules|recursive|directory|||REGISTRY-CONTRACT|bounded|Harness-owned Antigravity subtree inside shared .agents

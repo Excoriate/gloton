@@ -1,252 +1,92 @@
-# Rust CLI Template
+# Gloton
 
-A minimal, production-ready Rust CLI boilerplate with [clap](https://github.com/clap-rs/clap) for argument parsing and [just](https://github.com/casey/just) for task automation.
+> Keep a clear view of the repositories you have cloned across Git hosting platforms.
 
-## Features
+[![CI](https://github.com/Excoriate/gloton/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Excoriate/gloton/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Excoriate/gloton)](LICENSE)
 
-- ✅ **Minimal dependencies** - Only `clap` for CLI parsing
-- ✅ **Modern Rust** - Edition 2021 with idiomatic patterns
-- ✅ **Just recipes** - Pre-configured build, test, lint, and run tasks
-- ✅ **Production-ready** - Includes formatting, linting, and CI workflows
-- ✅ **Example command** - Working `hello` command to demonstrate structure
+> [!IMPORTANT]
+> Gloton is an early-stage Rust CLI. Repository discovery, remote comparison, and synchronization commands are planned, not implemented. The current binary provides a stable parser boundary with help, version, and explicit rejected-input behavior.
 
-## Quick Start
+## Why Gloton
 
-### Installation
+Repository collections tend to spread across GitHub organizations, Azure DevOps projects, and local directories. Gloton is intended to make that collection inspectable: what is cloned, which remote moved, and which repositories you choose to update.
 
-**Clone and customize:**
+The scaffold deliberately does less today. It establishes the command, toolchain, tests, contribution loop, CI, and repository policy without inventing provider or synchronization behavior before those contracts are designed.
+
+## Current behavior
+
+```text
+$ gloton --help
+Organize repository collections across Git hosting platforms
+```
+
+The binary currently supports:
+
+- `--help` for the implemented command boundary;
+- `--version` for package identity;
+- clear exit-code-2 diagnostics for missing or unknown input.
+
+A token such as `sync` is rejected because no synchronization command exists yet.
+
+## Get started
+
+Install these prerequisites once:
+
+- [Git](https://git-scm.com/);
+- [rustup](https://rustup.rs/), using its standard Cargo-home proxy installation;
+- [Just](https://just.systems/), version 1.55.0 or newer.
+
+Then use Just for repository work:
 
 ```sh
-# Clone this template
-git clone https://github.com/yourusername/yourproject.git
-cd yourproject
-
-# Update Cargo.toml with your project details
-# - name
-# - authors
-# - description
-# - repository
-
-# Build the project
-just build
-```
-
-**Or download a release binary from the [releases page](https://github.com/yourusername/yourproject/releases).**
-
-## Usage
-
-```console
-➜  ~  gloton --help
-A simple CLI tool
-
-Usage: gloton <COMMAND>
-
-Commands:
-  hello  Say hello to the world
-  help   Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help     Print help
-  -V, --version  Print version
-
-EXAMPLE:
-  gloton hello              # Output: Hello, World!
-  gloton hello --name Alex  # Output: Hello, Alex!
-```
-
-### Verify installation
-
-To verify that the CLI has been installed, do:
-
-```bash
-gloton --version
-```
-
-which should output the version if the installation was successful.
-
-## Development
-
-### Prerequisites
-
-- **Rust** (edition 2021+) - Install via [rustup](https://rustup.rs/)
-- **Just** (optional but recommended) - Install via `cargo install just` or `brew install just`
-
-### Available Commands
-
-The `Justfile` provides convenient recipes for common tasks:
-
-```bash
-# Show all available recipes
-just
-
-# Build in debug mode
-just build
-
-# Build in release mode
-just build-release
-
-# Run the CLI with arguments
-just run hello --name World
-
-# Quick hello example
-just hello
-just hello "Alex"
-
-# Development workflow (format + check + run)
-just dev
-
-# Run all tests
-just test
-
-# Format code with rustfmt
-just fmt
-
-# Check formatting
-just fmt-check
-
-# Run clippy linter (strict mode)
-just clippy
-
-# Clean build artifacts
-just clean
-
-# Full CI check (fmt + clippy + test + build)
+git clone git@github.com:Excoriate/gloton.git
+cd gloton
+just setup
 just ci
-
-# Install binary locally
-just install
+just run --help
 ```
 
-## Project Structure
+`rust-toolchain.toml` selects Rust 1.98.1 with Rustfmt and Clippy. `just doctor` prints the effective executables and versions when a local PATH is in doubt.
 
-```
-.
-├── Cargo.toml          # Project metadata and dependencies
-├── Justfile            # Task automation recipes
-├── src/
-│   ├── main.rs         # Entry point and command handling
-│   └── cli.rs          # CLI structure and command definitions
-└── README.md           # This file
-```
+## Developer commands
 
-## Customizing the Template
+Run `just` with no arguments to see the supported task surface.
 
-### Adding New Commands
+| Command | Purpose |
+|---|---|
+| `just setup` | Prepare the pinned toolchain and fetch locked dependencies. |
+| `just doctor` | Show effective Just, rustup, compiler, Cargo, Rustfmt, and Clippy identities. |
+| `just fmt` | Format Rust source. |
+| `just fmt-check` | Check formatting without changing source. |
+| `just lint` | Run strict Clippy across all targets and features. |
+| `just test` | Run the test suite, including CLI and repository-rule contracts. |
+| `just check` | Type-check all targets and features. |
+| `just build` | Build the debug binary. |
+| `just run <args>` | Run Gloton with the supplied arguments. |
+| `just install` | Install Gloton from this checkout. |
+| `just ci` | Run the same non-mutating gate used by GitHub Actions. |
 
-1. **Define command in `src/cli.rs`:**
+Normal development commands are intentionally routed through this file. Tool installation and the initial Git clone are the only bootstrap exceptions.
 
-```rust
-#[derive(Subcommand)]
-pub enum Commands {
-    Hello { ... },
+## Repository contract
 
-    /// Your new command description
-    YourCommand {
-        /// Command argument
-        #[arg(short, long)]
-        arg_name: String,
-    },
-}
-```
+- **One toolchain selector.** `rust-toolchain.toml` owns the compiler and components used by local tasks and CI.
+- **One task graph.** Just owns setup, checks, execution, and installation; CI calls the same recipes.
+- **Observable CLI behavior.** Tests assert process status and stdout/stderr instead of parser wiring.
+- **One agent-policy owner.** Canonical context and rules live in `.ai/harness/`; root and client files are generated projections.
+- **No speculative subsystems.** Provider adapters, persistence, networking, and update policy arrive with implemented consumers, not placeholder modules.
 
-1. **Handle command in `src/main.rs`:**
+The human Rust/CLI conventions are in [`docs/styleguides/rust/rust-cli-clap.md`](docs/styleguides/rust/rust-cli-clap.md). Agent-facing obligations are canonical under [`.ai/harness/rules/`](.ai/harness/rules/).
 
-```rust
-match cli.command {
-    Commands::Hello { name } => { ... },
+## Planned direction
 
-    Commands::YourCommand { arg_name } => {
-        // Your command logic here
-        println!("Executing with: {}", arg_name);
-    }
-}
-```
+Future design work may introduce repository inventory, GitHub and Azure DevOps discovery, remote-state comparison, and explicitly selected updates. Those capabilities are not part of version 0.1.0 until their command, safety, identity, and failure contracts are implemented and tested.
 
-1. **Test it:**
+## Contributing
 
-```bash
-just dev
-```
-
-### Adding Dependencies
-
-Add dependencies to `Cargo.toml`:
-
-```toml
-[dependencies]
-clap = { version = "4.5", features = ["derive"] }
-serde = { version = "1.0", features = ["derive"] }  # Example
-```
-
-Then run:
-
-```bash
-cargo build
-```
-
-## Example
-
-### Running the hello command
-
-Default greeting:
-
-```
-➜  ~  gloton hello
-Hello, World!
-```
-
-Custom greeting:
-
-```
-➜  ~  gloton hello --name Rustacean
-Hello, Rustacean!
-```
-
-Using the short flag:
-
-```
-➜  ~  gloton hello -n Alex
-Hello, Alex!
-```
-
-## Quality Checks
-
-This template includes strict quality checks:
-
-```bash
-# All checks must pass (run this before committing)
-just ci
-```
-
-Which runs:
-
-- ✅ `cargo fmt --check` - Code formatting
-- ✅ `cargo clippy -- -D warnings` - Linting (zero warnings allowed)
-- ✅ `cargo test` - All tests
-- ✅ `cargo build` - Compilation
-
-## Compatibility
-
-- **Rust**: Edition 2021 (Rust 1.56+)
-- **Platforms**: macOS, Linux, Windows
-- **Package Manager**: Cargo
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the supported workflow and scope rules.
 
 ## License
 
-Released under the MIT License. See the bundled [LICENSE](./LICENSE) file for details.
-
----
-
-## Template Checklist
-
-When using this template for a new project:
-
-- [ ] Update `Cargo.toml` (name, authors, description, repository)
-- [ ] Update this `README.md` (replace "gloton" with your project name)
-- [ ] Update `LICENSE` file with your name/organization
-- [ ] Remove the example `hello` command (or keep as reference)
-- [ ] Add your actual commands in `src/cli.rs` and `src/main.rs`
-- [ ] Update Justfile recipes if needed
-- [ ] Set up CI/CD (GitHub Actions, GitLab CI, etc.)
-- [ ] Create release workflow
-- [ ] Update repository URL and clone instructions above
+Gloton is available under the [MIT License](LICENSE).

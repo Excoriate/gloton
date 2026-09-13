@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "command": ".ai/harness/hooks/post-edit.sh",
+        "matcher": "Edit|Write"
+      },
+      {
+        "command": ".ai/harness/hooks/task-workspace-guard.sh",
+        "matcher": "Edit|Write|write_file|replace"
+      }
+    ]
+  }
+}

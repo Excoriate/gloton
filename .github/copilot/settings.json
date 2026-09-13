@@ -1,0 +1,6 @@
+{
+  "askUser": true,
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  }
+}
